@@ -1,4 +1,21 @@
-Moshi
+
+## 我的修改
+
+
+## TODO
+
+- 增加对Android JsonObject,JsonArray 的支持
+- 增加对可修改序列化数组的支持: MutableList,ArrayList,MutalbeMap,HashMap,
+- 增加专用注解,控制是否支持序列化和反序列化
+
+
+
+
+
+
+
+
+Moshi: 原README
 =====
 
 Moshi is a modern JSON library for Android and Java. It makes it easy to parse JSON into Java
