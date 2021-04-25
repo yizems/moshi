@@ -15,11 +15,11 @@
  */
 package com.squareup.moshi;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Customizes how a field is encoded as JSON.
@@ -40,4 +40,5 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Json {
   String name();
+  boolean ignore() default false;
 }

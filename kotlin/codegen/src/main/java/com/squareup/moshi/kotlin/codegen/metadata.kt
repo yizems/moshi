@@ -15,44 +15,17 @@
  */
 package com.squareup.moshi.kotlin.codegen
 
-import com.squareup.kotlinpoet.AnnotationSpec
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.LambdaTypeName
-import com.squareup.kotlinpoet.ParameterizedTypeName
-import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.TypeVariableName
-import com.squareup.kotlinpoet.WildcardTypeName
-import com.squareup.kotlinpoet.asClassName
-import com.squareup.kotlinpoet.asTypeName
-import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.metadata.isAbstract
-import com.squareup.kotlinpoet.metadata.isClass
-import com.squareup.kotlinpoet.metadata.isEnum
-import com.squareup.kotlinpoet.metadata.isInner
-import com.squareup.kotlinpoet.metadata.isInternal
-import com.squareup.kotlinpoet.metadata.isLocal
-import com.squareup.kotlinpoet.metadata.isPublic
-import com.squareup.kotlinpoet.metadata.isSealed
+import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.metadata.*
 import com.squareup.kotlinpoet.metadata.specs.TypeNameAliasTag
-import com.squareup.kotlinpoet.tag
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonQualifier
-import com.squareup.moshi.kotlin.codegen.api.DelegateKey
-import com.squareup.moshi.kotlin.codegen.api.PropertyGenerator
-import com.squareup.moshi.kotlin.codegen.api.TargetConstructor
-import com.squareup.moshi.kotlin.codegen.api.TargetParameter
-import com.squareup.moshi.kotlin.codegen.api.TargetProperty
-import com.squareup.moshi.kotlin.codegen.api.TargetType
-import com.squareup.moshi.kotlin.codegen.api.deepCopy
-import com.squareup.moshi.kotlin.codegen.api.rawType
+import com.squareup.moshi.kotlin.codegen.api.*
 import java.lang.annotation.ElementType
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Target
-import java.util.TreeSet
+import java.util.*
 import javax.annotation.processing.Messager
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.Element
@@ -63,6 +36,38 @@ import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import javax.tools.Diagnostic.Kind.ERROR
 import javax.tools.Diagnostic.Kind.WARNING
+import kotlin.collections.Collection
+import kotlin.collections.LinkedHashMap
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.Set
+import kotlin.collections.any
+import kotlin.collections.asSequence
+import kotlin.collections.associateWithTo
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.contains
+import kotlin.collections.emptyList
+import kotlin.collections.filterNot
+import kotlin.collections.filterTo
+import kotlin.collections.find
+import kotlin.collections.firstOrNull
+import kotlin.collections.indexOfLast
+import kotlin.collections.iterator
+import kotlin.collections.map
+import kotlin.collections.mutableListOf
+import kotlin.collections.mutableMapOf
+import kotlin.collections.mutableSetOf
+import kotlin.collections.onEach
+import kotlin.collections.orEmpty
+import kotlin.collections.plus
+import kotlin.collections.plusAssign
+import kotlin.collections.set
+import kotlin.collections.setOf
+import kotlin.collections.single
+import kotlin.collections.toList
+import kotlin.collections.toSet
+import kotlin.collections.withIndex
 
 private val JSON_QUALIFIER = JsonQualifier::class.java
 private val JSON = Json::class.asClassName()
@@ -408,6 +413,7 @@ private fun declaredProperties(
 }
 
 private val TargetProperty.isTransient get() = propertySpec.annotations.any { it.typeName == Transient::class.asClassName() }
+private val TargetProperty.isIgnore get() = propertySpec.annotations.isIgnore()
 private val TargetProperty.isSettable get() = propertySpec.mutable || parameter != null
 private val TargetProperty.isVisible: Boolean
   get() {
@@ -434,7 +440,7 @@ internal fun TargetProperty.generator(
       )
       return null
     }
-    return PropertyGenerator(this, DelegateKey(type, emptyList()), true)
+    return PropertyGenerator(this, DelegateKey(type, emptyList()), true, isIgnore)
   }
 
   if (!isVisible) {
@@ -483,7 +489,8 @@ internal fun TargetProperty.generator(
 
   return PropertyGenerator(
     this,
-    DelegateKey(type, jsonQualifierSpecs)
+    DelegateKey(type, jsonQualifierSpecs),
+    isIgnore = isIgnore,
   )
 }
 
@@ -511,6 +518,21 @@ private fun List<AnnotationSpec>?.jsonName(): String? {
       it.key.simpleName.contentEquals("name")
     }.value.value as String
   }
+}
+
+private fun List<AnnotationSpec>?.isIgnore(): Boolean {
+  if (this == null) return false
+  val value = firstOrNull { it.typeName == JSON }?.let { annotation ->
+    val mirror = annotation.tag<AnnotationMirror>()
+    mirror?.elementValues
+      ?.entries
+      ?.firstOrNull {
+        it.key.simpleName.contentEquals("ignore")
+      }
+      ?.value
+      ?.value
+  }
+  return value as? Boolean ?: false
 }
 
 private fun String.escapeDollarSigns(): String {

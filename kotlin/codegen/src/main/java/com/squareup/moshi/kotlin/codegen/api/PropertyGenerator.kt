@@ -23,7 +23,8 @@ import com.squareup.kotlinpoet.PropertySpec
 internal class PropertyGenerator(
   val target: TargetProperty,
   val delegateKey: DelegateKey,
-  val isTransient: Boolean = false
+  val isTransient: Boolean = false,
+  val isIgnore: Boolean = false,
 ) {
   val name = target.name
   val jsonName = target.jsonName ?: target.name
@@ -48,6 +49,13 @@ internal class PropertyGenerator(
    */
   val hasLocalIsPresentName = !isTransient && hasDefault && !hasConstructorParameter && delegateKey.nullable
   val hasConstructorDefault = hasDefault && hasConstructorParameter
+
+
+  init {
+    if (name == "abced") {
+      println("hasLocalIsPresentName::$hasLocalIsPresentName")
+    }
+  }
 
   fun allocateNames(nameAllocator: NameAllocator) {
     localName = nameAllocator.newName(name)
