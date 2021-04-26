@@ -640,10 +640,9 @@ final class JsonUtf8Reader extends JsonReader {
    */
   private int findName(String name, Options options) {
     for (int i = 0, size = options.strings.length; i < size; i++) {
-      if (name.equals(options.strings[i])) {
+      if (name.equalsIgnoreCase(options.strings[i])) {
         peeked = PEEKED_NONE;
         pathNames[stackSize - 1] = name;
-
         return i;
       }
     }
