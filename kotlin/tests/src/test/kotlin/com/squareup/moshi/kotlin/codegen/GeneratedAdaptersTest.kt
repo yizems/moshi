@@ -28,6 +28,7 @@ import org.junit.Test
 import java.util.*
 import kotlin.annotation.AnnotationTarget.TYPE
 import kotlin.properties.Delegates
+import kotlin.reflect.full.memberProperties
 
 @Suppress("UNUSED", "UNUSED_PARAMETER")
 class GeneratedAdaptersTest {
@@ -992,8 +993,7 @@ class GeneratedAdaptersTest {
     )
     assertThat(jsonAdapter.toJson(encoded)).isEqualTo("""{"a":"ANDROID","b":"BANANA"}""")
 
-    val delegateAdapters = GeneratedAdaptersTest_MultiplePropertiesShareAdapterJsonAdapter::class
-      .memberProperties.filter {
+    val delegateAdapters = GeneratedAdaptersTest_MultiplePropertiesShareAdapterJsonAdapter::class.memberProperties.filter {
         it.returnType.classifier == JsonAdapter::class
       }
     assertThat(delegateAdapters).hasSize(1)

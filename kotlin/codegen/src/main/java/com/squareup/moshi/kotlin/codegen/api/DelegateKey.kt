@@ -15,8 +15,20 @@
  */
 package com.squareup.moshi.kotlin.codegen.api
 
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.MemberName
+import com.squareup.kotlinpoet.NameAllocator
+import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.TypeVariableName
+import com.squareup.kotlinpoet.WildcardTypeName
+import com.squareup.kotlinpoet.asClassName
+import com.squareup.kotlinpoet.asTypeName
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Types
 
@@ -76,10 +88,7 @@ private fun TypeName.toVariableName(): String {
     is ParameterizedTypeName -> rawType.simpleName + "Of" + typeArguments.toVariableNames()
     is WildcardTypeName -> (inTypes + outTypes).toVariableNames()
     is TypeVariableName -> name + bounds.toVariableNames()
-    else -> {
-      println(this.toString())
-      throw IllegalArgumentException("Unrecognized type! $this")
-    }
+    else -> throw IllegalArgumentException("Unrecognized type! $this")
   }
 
   return if (isNullable) {

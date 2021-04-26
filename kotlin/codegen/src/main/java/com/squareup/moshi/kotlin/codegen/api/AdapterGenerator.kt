@@ -258,7 +258,6 @@ internal class AdapterGenerator(
 
     result.addProperty(optionsProperty)
     for (uniqueAdapter in nonTransientProperties.distinctBy { it.delegateKey }) {
-      println(uniqueAdapter.name)
       try {
         result.addProperty(
           uniqueAdapter.delegateKey.generateProperty(

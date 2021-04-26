@@ -55,13 +55,6 @@ internal class PropertyGenerator(
   val hasConstructorDefault = hasDefault && hasConstructorParameter
 
 
-  init {
-    if (name == "arity" || name=="abced" || name=="1. Information") {
-      println("$name----$delegateKey")
-      println("$isDeserialize,,$isSerialize")
-    }
-  }
-
   fun allocateNames(nameAllocator: NameAllocator) {
     localName = nameAllocator.newName(name)
     localIsPresentName = nameAllocator.newName("${name}Set")
