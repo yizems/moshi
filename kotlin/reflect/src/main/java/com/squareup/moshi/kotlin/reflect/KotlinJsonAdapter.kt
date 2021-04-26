@@ -16,6 +16,7 @@
 package com.squareup.moshi.kotlin.reflect
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonIgnore
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
@@ -25,9 +26,7 @@ import com.squareup.moshi.internal.Util
 import com.squareup.moshi.internal.Util.generatedAdapter
 import com.squareup.moshi.internal.Util.resolve
 import com.squareup.moshi.rawType
-import java.lang.reflect.Modifier
 import java.lang.reflect.Type
-import java.util.AbstractMap.SimpleEntry
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KParameter
@@ -36,7 +35,6 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaType
 
 /** Classes annotated with this are eligible for this adapter. */
@@ -73,6 +71,11 @@ internal class KotlinJsonAdapter<T>(
         continue
       }
       val binding = nonTransientBindings[index]
+
+      if (!binding.deserialize){
+        reader.skipValue()
+        continue
+      }
 
       val propertyIndex = binding.propertyIndex
       if (values[propertyIndex] !== ABSENT_VALUE) {
@@ -132,6 +135,7 @@ internal class KotlinJsonAdapter<T>(
     writer.beginObject()
     for (binding in allBindings) {
       if (binding == null) continue // Skip constructor parameters that aren't properties.
+      if (!binding.serialize) continue
 
       writer.name(binding.name)
       binding.adapter.toJson(writer, binding.get(value))
@@ -144,6 +148,8 @@ internal class KotlinJsonAdapter<T>(
   data class Binding<K, P>(
     val name: String,
     val jsonName: String?,
+    val serialize: Boolean = true,
+    val deserialize: Boolean = true,
     val adapter: JsonAdapter<P>,
     val property: KProperty1<K, P>,
     val parameter: KParameter?,
@@ -233,7 +239,20 @@ public class KotlinJsonAdapterFactory : JsonAdapter.Factory {
       for (property in rawTypeKotlin.memberProperties) {
         val parameter = parametersByName[property.name]
 
-        if (Modifier.isTransient(property.javaField?.modifiers ?: 0)) {
+        //获取序列化忽略注解
+        val jsonIgnoreAnnotation = property.findAnnotation<JsonIgnore>()
+
+        val serialize = when (jsonIgnoreAnnotation) {
+          null -> true
+          else -> jsonIgnoreAnnotation.serialize
+        }
+
+        val deserialize = when (jsonIgnoreAnnotation) {
+          null -> true
+          else -> jsonIgnoreAnnotation.deserialize
+        }
+
+        if (!serialize && !deserialize) {
           require(parameter == null || parameter.isOptional) {
             "No default value for transient constructor $parameter"
           }
@@ -249,6 +268,7 @@ public class KotlinJsonAdapterFactory : JsonAdapter.Factory {
         property.isAccessible = true
         val allAnnotations = property.annotations.toMutableList()
         var jsonAnnotation = property.findAnnotation<Json>()
+
 
         if (parameter != null) {
           allAnnotations += parameter.annotations
@@ -269,6 +289,8 @@ public class KotlinJsonAdapterFactory : JsonAdapter.Factory {
         bindingsByName[property.name] = KotlinJsonAdapter.Binding(
           name,
           jsonAnnotation?.name ?: name,
+          serialize,
+          deserialize,
           adapter,
           property as KProperty1<Any, Any?>,
           parameter,
