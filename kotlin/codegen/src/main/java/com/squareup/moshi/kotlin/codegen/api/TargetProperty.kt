@@ -24,7 +24,9 @@ internal data class TargetProperty(
   val propertySpec: PropertySpec,
   val parameter: TargetParameter?,
   val visibility: KModifier,
-  val jsonName: String?
+  val jsonName: String?,
+  val isSerialize: Boolean? = null,
+  val isDeserialize: Boolean? = null,
 ) {
   val name: String get() = propertySpec.name
   val type: TypeName get() = propertySpec.type

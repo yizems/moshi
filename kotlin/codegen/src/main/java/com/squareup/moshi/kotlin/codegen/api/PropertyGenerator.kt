@@ -23,8 +23,8 @@ import com.squareup.kotlinpoet.PropertySpec
 internal class PropertyGenerator(
   val target: TargetProperty,
   val delegateKey: DelegateKey,
-  val isTransient: Boolean = false,
-  val isIgnore: Boolean = false,
+  val isSerialize: Boolean = false,
+  val isDeserialize: Boolean = false,
 ) {
   val name = target.name
   val jsonName = target.jsonName ?: target.name
@@ -47,13 +47,18 @@ internal class PropertyGenerator(
    * This is used to indicate that presence should be checked first before possible assigning null
    * to an absent value
    */
-  val hasLocalIsPresentName = !isTransient && hasDefault && !hasConstructorParameter && delegateKey.nullable
+//  val hasLocalIsPresentName = !isTransient && hasDefault && !hasConstructorParameter && delegateKey.nullable
+  //针对 序列化方法修改
+  val hasLocalIsPresentNameFromJson = !isDeserialize && hasDefault && !hasConstructorParameter && delegateKey.nullable
+  val hasLocalIsPresentNameToJson = !isSerialize && hasDefault && !hasConstructorParameter && delegateKey.nullable
+
   val hasConstructorDefault = hasDefault && hasConstructorParameter
 
 
   init {
-    if (name == "abced") {
-      println("hasLocalIsPresentName::$hasLocalIsPresentName")
+    if (name == "arity" || name=="abced" || name=="1. Information") {
+      println("$name----$delegateKey")
+      println("$isDeserialize,,$isSerialize")
     }
   }
 

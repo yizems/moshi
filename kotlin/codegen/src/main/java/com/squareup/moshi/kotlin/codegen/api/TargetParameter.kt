@@ -25,5 +25,7 @@ internal data class TargetParameter(
   val type: TypeName,
   val hasDefault: Boolean,
   val jsonName: String? = null,
-  val qualifiers: Set<AnnotationSpec>? = null
+  val qualifiers: Set<AnnotationSpec>? = null,
+  val isSerialize: Boolean? = null,
+  val isDeserialize: Boolean? = null,
 )

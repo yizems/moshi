@@ -38,6 +38,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Retention(RUNTIME)
 @Documented
-public @interface Json {
-  String name();
+public @interface JsonIgnore {
+  /** 是否序列化,这里修改默认值,codegen 不生效 */
+  boolean serialize() default false;
+  /** 是否反序列化,这里修改默认值,codegen 不生效 */
+  boolean deserialize() default false;
 }

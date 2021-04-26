@@ -15,34 +15,15 @@
  */
 package com.squareup.moshi.kotlin.codegen.api
 
-import com.squareup.kotlinpoet.ARRAY
-import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
-import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.INT
-import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.MemberName
-import com.squareup.kotlinpoet.NameAllocator
-import com.squareup.kotlinpoet.ParameterSpec
-import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.TypeVariableName
-import com.squareup.kotlinpoet.asClassName
-import com.squareup.kotlinpoet.asTypeName
-import com.squareup.kotlinpoet.joinToCode
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.internal.Util
-import com.squareup.moshi.kotlin.codegen.api.FromJsonComponent.ParameterOnly
-import com.squareup.moshi.kotlin.codegen.api.FromJsonComponent.ParameterProperty
-import com.squareup.moshi.kotlin.codegen.api.FromJsonComponent.PropertyOnly
+import com.squareup.moshi.kotlin.codegen.api.FromJsonComponent.*
 import java.lang.reflect.Constructor
 import java.lang.reflect.Type
 import org.objectweb.asm.Type as AsmType
@@ -97,7 +78,13 @@ internal class AdapterGenerator(
     }
   }
 
-  private val nonTransientProperties = propertyList.filterNot { it.isTransient }
+//  private val nonTransientProperties = propertyList.filterNot { it.isTransient }
+
+  private val nonTransientProperties =
+    propertyList.filter { (it.isSerialize || it.isDeserialize) }
+  private val serilizeProperties = propertyList.filter { it.isSerialize }
+  private val deserilizeProperties = propertyList.filter { it.isDeserialize }
+
   private val className = target.typeName.rawType()
   private val visibility = target.visibility
   private val typeVariables = target.typeVariables
@@ -271,14 +258,20 @@ internal class AdapterGenerator(
 
     result.addProperty(optionsProperty)
     for (uniqueAdapter in nonTransientProperties.distinctBy { it.delegateKey }) {
-      result.addProperty(
-        uniqueAdapter.delegateKey.generateProperty(
-          nameAllocator,
-          typeRenderer,
-          moshiParam,
-          uniqueAdapter.name
+      println(uniqueAdapter.name)
+      try {
+        result.addProperty(
+          uniqueAdapter.delegateKey.generateProperty(
+            nameAllocator,
+            typeRenderer,
+            moshiParam,
+            uniqueAdapter.name
+          )
         )
-      )
+      } catch (e: Exception) {
+        e.printStackTrace()
+        continue
+      }
     }
 
     result.addFunction(generateToStringFun())
@@ -322,9 +315,9 @@ internal class AdapterGenerator(
       .addParameter(readerParam)
       .returns(originalTypeName)
 
-    for (property in nonTransientProperties) {
+    for (property in deserilizeProperties) {
       result.addCode("%L", property.generateLocalProperty())
-      if (property.hasLocalIsPresentName) {
+      if (property.hasLocalIsPresentNameFromJson) {
         result.addCode("%L", property.generateLocalIsPresentProperty())
       }
     }
@@ -349,7 +342,7 @@ internal class AdapterGenerator(
       if (property.target.parameterIndex in targetConstructorParams) {
         continue // Already handled
       }
-      if (property.isTransient) {
+      if (property.isDeserialize) {
         continue // We don't care about these outside of constructor parameters
       }
       components += PropertyOnly(property)
@@ -407,12 +400,12 @@ internal class AdapterGenerator(
 
     for (input in components) {
       if (input is ParameterOnly ||
-        (input is ParameterProperty && input.property.isTransient)
+        (input is ParameterProperty && !input.property.isDeserialize)
       ) {
         updateMaskIndexes()
         constructorPropertyTypes += input.type.asTypeBlock()
         continue
-      } else if (input is PropertyOnly && input.property.isTransient) {
+      } else if (input is PropertyOnly && !input.property.isDeserialize) {
         continue
       }
 
@@ -420,7 +413,7 @@ internal class AdapterGenerator(
       val property = (input as PropertyComponent).property
 
       // Proceed as usual
-      if (property.hasLocalIsPresentName || property.hasConstructorDefault) {
+      if (property.hasLocalIsPresentNameFromJson || property.hasConstructorDefault) {
         result.beginControlFlow("%L ->", propertyIndex)
         if (property.delegateKey.nullable) {
           result.addStatement(
@@ -496,7 +489,7 @@ internal class AdapterGenerator(
     var separator = "\n"
 
     val resultName = nameAllocator.newName("result")
-    val hasNonConstructorProperties = nonTransientProperties.any { !it.hasConstructorParameter }
+    val hasNonConstructorProperties = deserilizeProperties.any { !it.hasConstructorParameter }
     val returnOrResultAssignment = if (hasNonConstructorProperties) {
       // Save the result var for reuse
       result.addStatement("val %N: %T", resultName, originalTypeName)
@@ -521,7 +514,7 @@ internal class AdapterGenerator(
       result.addCode("«%L·%T(", returnOrResultAssignment, originalTypeName)
       var localSeparator = "\n"
       val paramsToSet = components.filterIsInstance<ParameterProperty>()
-        .filterNot { it.property.isTransient }
+        .filterNot { !it.property.isDeserialize }
 
       // Set all non-transient property parameters
       for (input in paramsToSet) {
@@ -591,7 +584,7 @@ internal class AdapterGenerator(
     for (input in components.filterIsInstance<ParameterComponent>()) {
       result.addCode(separator)
       if (useDefaultsConstructor) {
-        if (input is ParameterOnly || (input is ParameterProperty && input.property.isTransient)) {
+        if (input is ParameterOnly || (input is ParameterProperty && !input.property.isDeserialize)) {
           // We have to use the default primitive for the available type in order for
           // invokeDefaultConstructor to properly invoke it. Just using "null" isn't safe because
           // the transient type may be a primitive type.
@@ -610,7 +603,7 @@ internal class AdapterGenerator(
       }
       if (input is PropertyComponent) {
         val property = input.property
-        if (!property.isTransient && property.isRequired) {
+        if (property.isDeserialize && property.isRequired) {
           result.addMissingPropertyCheck(property, readerParam)
         }
       }
@@ -630,11 +623,11 @@ internal class AdapterGenerator(
     }
 
     // Assign properties not present in the constructor.
-    for (property in nonTransientProperties) {
+    for (property in deserilizeProperties) {
       if (property.hasConstructorParameter) {
         continue // Property already handled.
       }
-      if (property.hasLocalIsPresentName) {
+      if (property.hasLocalIsPresentNameToJson) {
         result.addStatement(
           "%1N.%2N = if (%3N) %4N else %1N.%2N",
           resultName,
@@ -683,7 +676,7 @@ internal class AdapterGenerator(
     result.endControlFlow()
 
     result.addStatement("%N.beginObject()", writerParam)
-    nonTransientProperties.forEach { property ->
+    serilizeProperties.forEach { property ->
       // We manually put in quotes because we know the jsonName is already escaped
       result.addStatement("%N.name(%S)", writerParam, property.jsonName)
       result.addStatement(

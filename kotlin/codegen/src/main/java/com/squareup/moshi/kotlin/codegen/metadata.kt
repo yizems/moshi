@@ -19,6 +19,7 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.metadata.*
 import com.squareup.kotlinpoet.metadata.specs.TypeNameAliasTag
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonIgnore
 import com.squareup.moshi.JsonQualifier
 import com.squareup.moshi.kotlin.codegen.api.*
 import java.lang.annotation.ElementType
@@ -36,41 +37,14 @@ import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import javax.tools.Diagnostic.Kind.ERROR
 import javax.tools.Diagnostic.Kind.WARNING
-import kotlin.collections.Collection
 import kotlin.collections.LinkedHashMap
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.Set
-import kotlin.collections.any
-import kotlin.collections.asSequence
-import kotlin.collections.associateWithTo
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.contains
-import kotlin.collections.emptyList
-import kotlin.collections.filterNot
-import kotlin.collections.filterTo
-import kotlin.collections.find
-import kotlin.collections.firstOrNull
-import kotlin.collections.indexOfLast
-import kotlin.collections.iterator
-import kotlin.collections.map
-import kotlin.collections.mutableListOf
-import kotlin.collections.mutableMapOf
-import kotlin.collections.mutableSetOf
-import kotlin.collections.onEach
-import kotlin.collections.orEmpty
-import kotlin.collections.plus
-import kotlin.collections.plusAssign
 import kotlin.collections.set
-import kotlin.collections.setOf
-import kotlin.collections.single
-import kotlin.collections.toList
-import kotlin.collections.toSet
-import kotlin.collections.withIndex
 
 private val JSON_QUALIFIER = JsonQualifier::class.java
 private val JSON = Json::class.asClassName()
+private val JSONIgnore = JsonIgnore::class.asClassName()
 private val OBJECT_CLASS = ClassName("java.lang", "Object")
 private val VISIBILITY_MODIFIERS = setOf(
   KModifier.INTERNAL,
@@ -101,7 +75,9 @@ internal fun primaryConstructor(
       type = parameter.type,
       hasDefault = parameter.defaultValue != null,
       qualifiers = parameter.annotations.qualifiers(messager, elements),
-      jsonName = parameter.annotations.jsonName()
+      jsonName = parameter.annotations.jsonName(),
+      isSerialize = parameter.annotations.isSerialize(),
+      isDeserialize = parameter.annotations.isDeserialize(),
     )
   }
 
@@ -405,15 +381,17 @@ private fun declaredProperties(
       parameter = parameter,
       visibility = property.modifiers.visibility(),
       jsonName = parameter?.jsonName ?: property.annotations.jsonName()
-        ?: name.escapeDollarSigns()
+        ?: name.escapeDollarSigns(),
+      isSerialize = parameter?.isSerialize ?: property.annotations.isSerialize(),
+      isDeserialize = parameter?.isDeserialize ?: property.annotations.isDeserialize()
     )
   }
 
   return result
 }
 
-private val TargetProperty.isTransient get() = propertySpec.annotations.any { it.typeName == Transient::class.asClassName() }
-private val TargetProperty.isIgnore get() = propertySpec.annotations.isIgnore()
+//private val TargetProperty.isTransient get() = propertySpec.annotations.any { it.typeName == Transient::class.asClassName() }
+
 private val TargetProperty.isSettable get() = propertySpec.mutable || parameter != null
 private val TargetProperty.isVisible: Boolean
   get() {
@@ -431,7 +409,7 @@ internal fun TargetProperty.generator(
   sourceElement: TypeElement,
   elements: Elements
 ): PropertyGenerator? {
-  if (isTransient) {
+  if (isSerialize == false && isDeserialize == false) {
     if (!hasDefault) {
       messager.printMessage(
         ERROR,
@@ -440,7 +418,12 @@ internal fun TargetProperty.generator(
       )
       return null
     }
-    return PropertyGenerator(this, DelegateKey(type, emptyList()), true, isIgnore)
+    return PropertyGenerator(
+      this,
+      DelegateKey(type, emptyList()),
+      isSerialize = false,
+      isDeserialize = false,
+    )
   }
 
   if (!isVisible) {
@@ -490,7 +473,8 @@ internal fun TargetProperty.generator(
   return PropertyGenerator(
     this,
     DelegateKey(type, jsonQualifierSpecs),
-    isIgnore = isIgnore,
+    isSerialize = isSerialize != false,
+    isDeserialize = isDeserialize != false,
   )
 }
 
@@ -520,14 +504,40 @@ private fun List<AnnotationSpec>?.jsonName(): String? {
   }
 }
 
-private fun List<AnnotationSpec>?.isIgnore(): Boolean {
-  if (this == null) return false
-  val value = firstOrNull { it.typeName == JSON }?.let { annotation ->
+/**
+ * 获取是否序列化配置,默认为true
+ */
+private fun List<AnnotationSpec>?.isSerialize(): Boolean? {
+  if (this == null) return null
+  if (firstOrNull { it.typeName == JSONIgnore } == null) return true
+
+  val value = firstOrNull { it.typeName == JSONIgnore }?.let { annotation ->
     val mirror = annotation.tag<AnnotationMirror>()
     mirror?.elementValues
       ?.entries
       ?.firstOrNull {
-        it.key.simpleName.contentEquals("ignore")
+        it.key.simpleName.contentEquals("serialize")
+      }
+      ?.value
+      ?.value
+  }
+  return value as? Boolean ?: false
+}
+
+/**
+ * 获取是否反序列化配置,默认为true
+ */
+private fun List<AnnotationSpec>?.isDeserialize(): Boolean? {
+  if (this == null) return null
+
+  if (firstOrNull { it.typeName == JSONIgnore } == null) return true
+
+  val value = first { it.typeName == JSONIgnore }.let { annotation ->
+    val mirror = annotation.tag<AnnotationMirror>()
+    mirror?.elementValues
+      ?.entries
+      ?.firstOrNull {
+        it.key.simpleName.contentEquals("deserialize")
       }
       ?.value
       ?.value
