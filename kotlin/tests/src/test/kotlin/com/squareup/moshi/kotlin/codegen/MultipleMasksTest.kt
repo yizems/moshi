@@ -16,6 +16,7 @@
 package com.squareup.moshi.kotlin.codegen
 
 import com.squareup.moshi.JsonClass
+import com.squareup.moshi.JsonIgnore
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import org.intellij.lang.annotations.Language
@@ -29,7 +30,7 @@ import org.junit.Test
  *
  * This covers a few cases of this:
  * - Ensuring values from json are matched to properties correctly
- * - Some `@Transient` parameters (which participate in the constructor signature and mask indices)
+ * - Some `@JsonIgnore` parameters (which participate in the constructor signature and mask indices)
  * - This example has 3 total masks generated.
  *
  * Regression test for https://github.com/square/moshi/issues/977
@@ -96,7 +97,7 @@ class MultipleMasks(
   val arg36: Long = 36,
   val arg37: Long = 37,
   val arg38: Long = 38,
-  @Transient val arg39: Long = 39,
+  @JsonIgnore val arg39: Long = 39,
   val arg40: Long = 40,
   val arg41: Long = 41,
   val arg42: Long = 42,
@@ -110,7 +111,7 @@ class MultipleMasks(
   val arg50: Long = 50,
   val arg51: Long = 51,
   val arg52: Long = 52,
-  @Transient val arg53: Long = 53,
+  @JsonIgnore val arg53: Long = 53,
   val arg54: Long = 54,
   val arg55: Long = 55,
   val arg56: Long = 56,

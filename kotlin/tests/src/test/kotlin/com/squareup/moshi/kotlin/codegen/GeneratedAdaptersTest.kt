@@ -28,7 +28,6 @@ import org.junit.Test
 import java.util.*
 import kotlin.annotation.AnnotationTarget.TYPE
 import kotlin.properties.Delegates
-import kotlin.reflect.full.memberProperties
 
 @Suppress("UNUSED", "UNUSED_PARAMETER")
 class GeneratedAdaptersTest {
@@ -594,7 +593,7 @@ class GeneratedAdaptersTest {
   }
 
   @JsonClass(generateAdapter = true)
-  class TransientConstructorParameter(@Transient var a: Int = -1, var b: Int = -1)
+  class TransientConstructorParameter(@JsonIgnore var a: Int = -1, var b: Int = -1)
 
   @Test fun multipleTransientConstructorParameters() {
     val moshi = Moshi.Builder().build()
@@ -610,7 +609,7 @@ class GeneratedAdaptersTest {
   }
 
   @JsonClass(generateAdapter = true)
-  class MultipleTransientConstructorParameters(@Transient var a: Int = -1, var b: Int = -1, @Transient var c: Int = -1)
+  class MultipleTransientConstructorParameters(@JsonIgnore var a: Int = -1, var b: Int = -1, @JsonIgnore var c: Int = -1)
 
   @Test fun transientProperty() {
     val moshi = Moshi.Builder().build()
@@ -630,8 +629,8 @@ class GeneratedAdaptersTest {
 
   @JsonClass(generateAdapter = true)
   class TransientProperty {
-    @Transient var a: Int = -1
-    @Transient private var b: Int = -1
+    @JsonIgnore var a: Int = -1
+    @JsonIgnore private var b: Int = -1
     var c: Int = -1
 
     fun getB() = b
@@ -1073,7 +1072,7 @@ class GeneratedAdaptersTest {
 
   @JsonClass(generateAdapter = true)
   class PrivateTransient {
-    @Transient private var a: Int = -1
+    @JsonIgnore private var a: Int = -1
     var b: Int = -1
 
     fun readA(): Int {
@@ -1264,21 +1263,6 @@ class GeneratedAdaptersTest {
     )
   }
 
-    @JsonClass(generateAdapter = true)
-    class TestIsPresent() {
-        var abced: String=""
-    }
-
-  @Test fun test_is_present() {
-    val moshi = Moshi.Builder().build()
-    val adapter = moshi.adapter<TestIsPresent>()
-    adapter.fromJson("""
-      {
-        "abced":"654"
-      }
-    """.trimIndent())
-  }
-
   @JsonClass(generateAdapter = true, generator = "custom")
   data class CustomGeneratedClassMissing(val foo: String)
 
@@ -1305,7 +1289,7 @@ class GeneratedAdaptersTest {
   @JsonClass(generateAdapter = true)
   class InternalPropertyWithoutBackingField {
 
-    @Transient
+    @JsonIgnore
     private var foo: Int = 5
 
     internal var bar
@@ -1395,13 +1379,13 @@ class GeneratedAdaptersTest {
   @JsonClass(generateAdapter = true)
   data class LambdaTypeNames(
     val id: String,
-    @Transient
+    @JsonIgnore
     val simple: ((String) -> Boolean)? = null,
     // Receivers count as the first param, just annotated with a special annotation to indicate it's a receiver
-    @Transient
+    @JsonIgnore
     val receiver: (String.(String) -> Boolean)? = null,
     // Tests that we use `FunctionN` since it has more than 23 params
-    @Transient
+    @JsonIgnore
     val arity: (String.(String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String) -> Boolean)? = null,
   )
 }

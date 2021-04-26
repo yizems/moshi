@@ -25,11 +25,7 @@ import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import kotlin.reflect.KClass
-import kotlin.reflect.KClassifier
-import kotlin.reflect.KType
-import kotlin.reflect.KTypeProjection
-import kotlin.reflect.KVariance
+import kotlin.reflect.*
 import kotlin.reflect.KVariance.INVARIANT
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberProperties
@@ -306,7 +302,7 @@ class JsonClassCodegenProcessorTest {
           import com.squareup.moshi.JsonClass
 
           @JsonClass(generateAdapter = true)
-          class RequiredTransientConstructorParameter(@Transient var a: Int)
+          class RequiredTransientConstructorParameter(@JsonIgnore var a: Int)
           """
       )
     )
@@ -581,7 +577,7 @@ class JsonClassCodegenProcessorTest {
               val arg36: Long = 36,
               val arg37: Long = 37,
               val arg38: Long = 38,
-              @Transient val arg39: Long = 39,
+              @JsonIgnore val arg39: Long = 39,
               val arg40: Long = 40,
               val arg41: Long = 41,
               val arg42: Long = 42,
@@ -595,7 +591,7 @@ class JsonClassCodegenProcessorTest {
               val arg50: Long = 50,
               val arg51: Long = 51,
               val arg52: Long = 52,
-              @Transient val arg53: Long = 53,
+              @JsonIgnore val arg53: Long = 53,
               val arg54: Long = 54,
               val arg55: Long = 55,
               val arg56: Long = 56,

@@ -16,25 +16,14 @@
 package com.squareup.moshi.kotlin.reflect
 
 import com.google.common.truth.Truth.assertThat
-import com.squareup.moshi.FromJson
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.JsonDataException
-import com.squareup.moshi.JsonQualifier
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.ToJson
-import com.squareup.moshi.adapter
+import com.squareup.moshi.*
 import org.assertj.core.api.Assertions
 import org.junit.Assert.fail
 import org.junit.Test
 import java.io.ByteArrayOutputStream
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.WildcardType
-import java.util.Locale
-import java.util.SimpleTimeZone
+import java.util.*
 import kotlin.annotation.AnnotationRetention.RUNTIME
 
 @Suppress("UNUSED", "UNUSED_PARAMETER")
@@ -293,7 +282,7 @@ class KotlinJsonAdapterTest {
     assertThat(decoded.b).isEqualTo(6)
   }
 
-  class TransientConstructorParameter(@Transient var a: Int = -1, var b: Int = -1)
+  class TransientConstructorParameter(@JsonIgnore var a: Int = -1, var b: Int = -1)
 
   @Test fun multipleTransientConstructorParameters() {
     val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
@@ -308,7 +297,7 @@ class KotlinJsonAdapterTest {
     assertThat(decoded.c).isEqualTo(-1)
   }
 
-  class MultipleTransientConstructorParameters(@Transient var a: Int = -1, var b: Int = -1, @Transient var c: Int = -1)
+  class MultipleTransientConstructorParameters(@JsonIgnore var a: Int = -1, var b: Int = -1, @JsonIgnore var c: Int = -1)
 
   @Test fun requiredTransientConstructorParameterFails() {
     val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
@@ -324,7 +313,7 @@ class KotlinJsonAdapterTest {
     }
   }
 
-  class RequiredTransientConstructorParameter(@Transient var a: Int)
+  class RequiredTransientConstructorParameter(@JsonIgnore var a: Int)
 
   @Test fun transientProperty() {
     val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
@@ -343,8 +332,8 @@ class KotlinJsonAdapterTest {
   }
 
   class TransientProperty {
-    @Transient var a: Int = -1
-    @Transient private var b: Int = -1
+    @JsonIgnore var a: Int = -1
+    @JsonIgnore private var b: Int = -1
     var c: Int = -1
 
     fun getB() = b
