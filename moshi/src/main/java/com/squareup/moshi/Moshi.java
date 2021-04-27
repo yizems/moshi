@@ -19,6 +19,7 @@ import static com.squareup.moshi.internal.Util.canonicalize;
 import static com.squareup.moshi.internal.Util.removeSubtypeWildcard;
 import static com.squareup.moshi.internal.Util.typeAnnotatedWithAnnotations;
 
+import com.squareup.moshi.ext.ExtCompatAdapterKt;
 import com.squareup.moshi.internal.Util;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -241,6 +242,14 @@ public final class Moshi {
     public Builder addLast(Object adapter) {
       if (adapter == null) throw new IllegalArgumentException("adapter == null");
       return addLast(AdapterMethodsFactory.get(adapter));
+    }
+    /** 添加自带的兼容处理类 */
+    public Builder addExtCompatAdapters(){
+      List<Object> extCompatAdapters = ExtCompatAdapterKt.getExtCompatAdapters();
+      for (Object extCompatAdapter : extCompatAdapters) {
+        add(extCompatAdapter);
+      }
+      return this;
     }
 
     @CheckReturnValue
