@@ -38,7 +38,11 @@ public final class NullSafeJsonAdapter<T> extends JsonAdapter<T> {
     if (reader.peek() == JsonReader.Token.NULL) {
       return reader.nextNull();
     } else {
-      return delegate.fromJson(reader);
+        try {
+            return delegate.fromJson(reader);
+        } catch (Exception e) {
+            return null;
+        }
     }
   }
 
