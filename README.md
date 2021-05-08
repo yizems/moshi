@@ -1,18 +1,15 @@
-
 ## 我的修改
-
 
 ## TODO
 
-- 增加对Android JsonObject,JsonArray 的支持
-- 增加对可修改序列化数组的支持: MutableList,ArrayList,MutalbeMap,HashMap,
-- 增加专用注解,控制是否支持序列化和反序列化
+- 增加对Android JsonObject,JsonArray 的支持:待测试
 
+## 已完成
 
-
-
-
-
+- 增加专用注解`JsonIgnore`,控制是否支持序列化和反序列化
+- 添加 对 `HashMap,MutableMap,LinkedHashMap,ArrayList,MutableList,HashSet,MutableSet,LinkedHashSet` 的支持
+- 反序列化失败,转为null,不闪退
+- 反序列化大小写不敏感
 
 
 Moshi: 原README

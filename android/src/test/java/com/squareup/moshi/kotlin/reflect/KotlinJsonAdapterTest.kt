@@ -13,21 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.squareup.moshi.kotlin.reflect
 
-pluginManagement {
-  repositories {
-    mavenCentral()
-    gradlePluginPortal()
-  }
+class KotlinJsonAdapterTest {
+
 }
-
-rootProject.name = "moshi-root"
-include(":moshi")
-include(":moshi:japicmp")
-include(":adapters")
-include(":adapters:japicmp")
-include(":examples")
-include(":kotlin:reflect")
-include(":kotlin:codegen")
-include(":kotlin:tests")
-include(":android")

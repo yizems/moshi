@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-pluginManagement {
-  repositories {
-    mavenCentral()
-    gradlePluginPortal()
-  }
+plugins {
+  kotlin("jvm")
 }
 
-rootProject.name = "moshi-root"
-include(":moshi")
-include(":moshi:japicmp")
-include(":adapters")
-include(":adapters:japicmp")
-include(":examples")
-include(":kotlin:reflect")
-include(":kotlin:codegen")
-include(":kotlin:tests")
-include(":android")
+dependencies {
+  api(project(":moshi"))
+
+  compileOnly("com.vaadin.external.google:android-json:0.0.20131108.vaadin1")
+
+  testImplementation(kotlin("test"))
+  testImplementation(Dependencies.Testing.junit)
+  testImplementation(Dependencies.Testing.truth)
+}
