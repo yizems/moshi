@@ -26,6 +26,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "6.0.0"
 }
 
+group = "cn.yize.moshi"
 
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {

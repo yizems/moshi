@@ -19,6 +19,8 @@ plugins {
   id("maven-publish")
 }
 
+group = "cn.yize.moshi"
+
 dependencies {
   api(project(":moshi"))
 

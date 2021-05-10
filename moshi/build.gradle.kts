@@ -23,6 +23,9 @@ plugins {
   id("maven-publish")
 }
 
+group = "cn.yize.moshi"
+
+
 tasks.withType<KotlinCompile>()
   .matching { it.name.contains("test", true) }
   .configureEach {
