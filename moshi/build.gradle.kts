@@ -25,6 +25,8 @@ plugins {
 
 group = "cn.yize.moshi"
 
+version = "1.12.0.7"
+
 
 tasks.withType<KotlinCompile>()
   .matching { it.name.contains("test", true) }

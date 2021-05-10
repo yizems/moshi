@@ -21,6 +21,8 @@ plugins {
 
 group = "cn.yize.moshi"
 
+version = "1.12.0.7"
+
 dependencies {
   api(project(":moshi"))
 

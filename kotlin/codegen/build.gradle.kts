@@ -28,6 +28,9 @@ plugins {
 
 group = "cn.yize.moshi"
 
+version = "1.12.0.7"
+
+
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
         jvmTarget = "1.8"
