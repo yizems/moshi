@@ -171,17 +171,17 @@ subprojects {
       }
     }
 
-    if (name != "codegen" && pluginManager.hasPlugin("org.jetbrains.kotlin.jvm")) {
-      apply(plugin = "org.jetbrains.dokka")
-      tasks.named<DokkaTask>("dokkaHtml") {
-        outputDirectory.set(rootDir.resolve("docs/1.x"))
-        dokkaSourceSets.configureEach {
-          skipDeprecated.set(true)
-          externalDocumentationLink {
-            url.set(URL("https://square.github.io/okio/2.x/okio/"))
-          }
-        }
-      }
-    }
+//    if (name != "codegen" && pluginManager.hasPlugin("org.jetbrains.kotlin.jvm")) {
+//      apply(plugin = "org.jetbrains.dokka")
+//      tasks.named<DokkaTask>("dokkaHtml") {
+//        outputDirectory.set(rootDir.resolve("docs/1.x"))
+//        dokkaSourceSets.configureEach {
+//          skipDeprecated.set(true)
+//          externalDocumentationLink {
+//            url.set(URL("https://square.github.io/okio/2.x/okio/"))
+//          }
+//        }
+//      }
+//    }
   }
 }
