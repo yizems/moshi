@@ -20,7 +20,11 @@ plugins {
   kotlin("jvm")
 //  id("com.vanniktech.maven.publish")
   id("ru.vyarus.animalsniffer")
+  id("maven-publish")
 }
+
+group = "cn.yize.moshi.codege"
+version = providers.gradleProperty("MY_VERSION").get()
 
 tasks.withType<KotlinCompile>()
   .matching { it.name.contains("test", true) }

@@ -16,7 +16,11 @@
 
 plugins {
   kotlin("jvm")
+  id("maven-publish")
 }
+
+group = "cn.yize.moshi.kotlin.android"
+version = providers.gradleProperty("MY_VERSION").get()
 
 dependencies {
   api(project(":moshi"))

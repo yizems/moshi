@@ -19,6 +19,7 @@ import org.gradle.jvm.tasks.Jar
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.net.URI
 import java.net.URL
 
 buildscript {
@@ -110,6 +111,9 @@ spotless {
 subprojects {
   repositories {
     mavenCentral()
+    maven {
+      url = URI("https://jitpack.io")
+    }
     // Required for Dokka
     exclusiveContent {
       forRepository {

@@ -19,89 +19,93 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransf
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  kotlin("jvm")
-  kotlin("kapt")
+    kotlin("jvm")
+    kotlin("kapt")
 //  id("com.vanniktech.maven.publish")
-  id("com.github.johnrengelman.shadow") version "6.0.0"
+    id("com.github.johnrengelman.shadow") version "6.0.0"
+    id("maven-publish")
 }
 
+group = "cn.yize.moshi.codege"
+version = providers.gradleProperty("MY_VERSION").get()
+
 tasks.withType<KotlinCompile>().configureEach {
-  kotlinOptions {
-    jvmTarget = "1.8"
-    @Suppress("SuspiciousCollectionReassignment")
-    freeCompilerArgs += listOf(
-      "-Xopt-in=com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview"
-    )
-  }
+    kotlinOptions {
+        jvmTarget = "1.8"
+        @Suppress("SuspiciousCollectionReassignment")
+        freeCompilerArgs += listOf(
+            "-Xopt-in=com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview"
+        )
+    }
 }
 
 // To make Gradle happy
 java {
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 val shade: Configuration = configurations.maybeCreate("compileShaded")
 configurations.getByName("compileOnly").extendsFrom(shade)
 dependencies {
-  // Use `api` because kapt will not resolve `runtime` dependencies without it, only `compile`
-  // https://youtrack.jetbrains.com/issue/KT-41702
-  api(project(":moshi"))
-  api(kotlin("reflect"))
-  shade(Dependencies.Kotlin.metadata) {
-    exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
-  }
-  api(Dependencies.KotlinPoet.kotlinPoet)
-  shade(Dependencies.KotlinPoet.metadata) {
-    exclude(group = "org.jetbrains.kotlin")
-    exclude(group = "com.squareup", module = "kotlinpoet")
-  }
-  shade(Dependencies.KotlinPoet.metadataSpecs) {
-    exclude(group = "org.jetbrains.kotlin")
-    exclude(group = "com.squareup", module = "kotlinpoet")
-  }
-  api(Dependencies.KotlinPoet.elementsClassInspector)
-  shade(Dependencies.KotlinPoet.elementsClassInspector) {
-    exclude(group = "org.jetbrains.kotlin")
-    exclude(group = "com.squareup", module = "kotlinpoet")
-    exclude(group = "com.google.guava")
-  }
-  api(Dependencies.asm)
+    // Use `api` because kapt will not resolve `runtime` dependencies without it, only `compile`
+    // https://youtrack.jetbrains.com/issue/KT-41702
+    api(project(":moshi"))
+    api(kotlin("reflect"))
+    shade(Dependencies.Kotlin.metadata) {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
+    }
+    api(Dependencies.KotlinPoet.kotlinPoet)
+    shade(Dependencies.KotlinPoet.metadata) {
+        exclude(group = "org.jetbrains.kotlin")
+        exclude(group = "com.squareup", module = "kotlinpoet")
+    }
+    shade(Dependencies.KotlinPoet.metadataSpecs) {
+        exclude(group = "org.jetbrains.kotlin")
+        exclude(group = "com.squareup", module = "kotlinpoet")
+    }
+    api(Dependencies.KotlinPoet.elementsClassInspector)
+    shade(Dependencies.KotlinPoet.elementsClassInspector) {
+        exclude(group = "org.jetbrains.kotlin")
+        exclude(group = "com.squareup", module = "kotlinpoet")
+        exclude(group = "com.google.guava")
+    }
+    api(Dependencies.asm)
 
-  api(Dependencies.AutoService.annotations)
-  kapt(Dependencies.AutoService.processor)
-  api(Dependencies.Incap.annotations)
-  kapt(Dependencies.Incap.processor)
+    api(Dependencies.AutoService.annotations)
+    kapt(Dependencies.AutoService.processor)
+    api(Dependencies.Incap.annotations)
+    kapt(Dependencies.Incap.processor)
 
-  // Copy these again as they're not automatically included since they're shaded
-  testImplementation(Dependencies.KotlinPoet.metadata)
-  testImplementation(Dependencies.KotlinPoet.metadataSpecs)
-  testImplementation(Dependencies.KotlinPoet.elementsClassInspector)
-  testImplementation(Dependencies.Testing.junit)
-  testImplementation(Dependencies.Testing.truth)
-  testImplementation(Dependencies.Testing.compileTesting)
+    // Copy these again as they're not automatically included since they're shaded
+    testImplementation(Dependencies.KotlinPoet.metadata)
+    testImplementation(Dependencies.KotlinPoet.metadataSpecs)
+    testImplementation(Dependencies.KotlinPoet.elementsClassInspector)
+    testImplementation(Dependencies.Testing.junit)
+    testImplementation(Dependencies.Testing.truth)
+    testImplementation(Dependencies.Testing.compileTesting)
 }
 
 val relocateShadowJar = tasks.register<ConfigureShadowRelocation>("relocateShadowJar") {
-  target = tasks.shadowJar.get()
+    target = tasks.shadowJar.get()
 }
 
 val shadowJar = tasks.shadowJar.apply {
-  configure {
-    dependsOn(relocateShadowJar)
-    archiveClassifier.set("")
-    configurations = listOf(shade)
-    relocate("com.squareup.kotlinpoet.metadata", "com.squareup.moshi.kotlinpoet.metadata")
-    relocate(
-      "com.squareup.kotlinpoet.classinspector",
-      "com.squareup.moshi.kotlinpoet.classinspector"
-    )
-    relocate("kotlinx.metadata", "com.squareup.moshi.kotlinx.metadata")
-    transformers.add(ServiceFileTransformer())
-  }
+    configure {
+        dependsOn(relocateShadowJar)
+        archiveClassifier.set("")
+        configurations = listOf(shade)
+        relocate("com.squareup.kotlinpoet.metadata", "com.squareup.moshi.kotlinpoet.metadata")
+        relocate(
+            "com.squareup.kotlinpoet.classinspector",
+            "com.squareup.moshi.kotlinpoet.classinspector"
+        )
+        relocate("kotlinx.metadata", "com.squareup.moshi.kotlinx.metadata")
+        transformers.add(ServiceFileTransformer())
+    }
 }
 
 artifacts {
-  runtime(shadowJar)
-  archives(shadowJar)
+    runtime(shadowJar)
+    archives(shadowJar)
 }
