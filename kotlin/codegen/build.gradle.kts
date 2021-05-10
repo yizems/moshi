@@ -26,7 +26,7 @@ plugins {
     id("maven-publish")
 }
 
-group = "cn.yize.moshi.codege"
+group = "cn.yize.moshi"
 version = providers.gradleProperty("MY_VERSION").get()
 
 tasks.withType<KotlinCompile>().configureEach {
