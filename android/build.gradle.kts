@@ -19,9 +19,6 @@ plugins {
   id("maven-publish")
 }
 
-group = "cn.yize.moshi"
-version = providers.gradleProperty("MY_VERSION").get()
-
 dependencies {
   api(project(":moshi"))
 

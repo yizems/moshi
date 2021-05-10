@@ -23,9 +23,6 @@ plugins {
   id("maven-publish")
 }
 
-group = "cn.yize.moshi"
-version = providers.gradleProperty("MY_VERSION").get()
-
 tasks.withType<KotlinCompile>()
   .matching { it.name.contains("test", true) }
   .configureEach {
