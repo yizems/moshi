@@ -30,11 +30,11 @@ buildscript {
 }
 
 plugins {
-  id("com.vanniktech.maven.publish") version "0.14.2" apply false
+//  id("com.vanniktech.maven.publish") version "0.14.2" apply false
   id("org.jetbrains.dokka") version "1.4.30" apply false
   id("com.diffplug.spotless") version "5.11.0"
   id("ru.vyarus.animalsniffer") version "1.5.3" apply false
-  id("me.champeau.gradle.japicmp") version "0.2.9" apply false
+//  id("me.champeau.gradle.japicmp") version "0.2.9" apply false
 }
 
 spotless {
@@ -157,31 +157,32 @@ subprojects {
   }
 
   // Configure publishing
-  pluginManager.withPlugin("com.vanniktech.maven.publish") {
-    // Configure automatic-module-name, but only for published modules
-    @Suppress("UnstableApiUsage")
-    val automaticModuleName = providers.gradleProperty("AUTOMATIC_MODULE_NAME")
-      .forUseAtConfigurationTime()
-    if (automaticModuleName.isPresent) {
-      val name = automaticModuleName.get()
-      tasks.withType<Jar>().configureEach {
-        manifest {
-          attributes("Automatic-Module-Name" to name)
-        }
-      }
-    }
-
-//    if (name != "codegen" && pluginManager.hasPlugin("org.jetbrains.kotlin.jvm")) {
-//      apply(plugin = "org.jetbrains.dokka")
-//      tasks.named<DokkaTask>("dokkaHtml") {
-//        outputDirectory.set(rootDir.resolve("docs/1.x"))
-//        dokkaSourceSets.configureEach {
-//          skipDeprecated.set(true)
-//          externalDocumentationLink {
-//            url.set(URL("https://square.github.io/okio/2.x/okio/"))
-//          }
+//  pluginManager.withPlugin("com.vanniktech.maven.publish") {
+//    // Configure automatic-module-name, but only for published modules
+//    @Suppress("UnstableApiUsage")
+//    val automaticModuleName = providers.gradleProperty("AUTOMATIC_MODULE_NAME")
+//      .forUseAtConfigurationTime()
+//    if (automaticModuleName.isPresent) {
+//      val name = automaticModuleName.get()
+//      tasks.withType<Jar>().configureEach {
+//        manifest {
+//          attributes("Automatic-Module-Name" to name)
 //        }
 //      }
 //    }
-  }
+//
+//
+////    if (name != "codegen" && pluginManager.hasPlugin("org.jetbrains.kotlin.jvm")) {
+////      apply(plugin = "org.jetbrains.dokka")
+////      tasks.named<DokkaTask>("dokkaHtml") {
+////        outputDirectory.set(rootDir.resolve("docs/1.x"))
+////        dokkaSourceSets.configureEach {
+////          skipDeprecated.set(true)
+////          externalDocumentationLink {
+////            url.set(URL("https://square.github.io/okio/2.x/okio/"))
+////          }
+////        }
+////      }
+////    }
+//  }
 }

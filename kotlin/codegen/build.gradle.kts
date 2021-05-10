@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   kotlin("jvm")
   kotlin("kapt")
-  id("com.vanniktech.maven.publish")
+//  id("com.vanniktech.maven.publish")
   id("com.github.johnrengelman.shadow") version "6.0.0"
 }
 

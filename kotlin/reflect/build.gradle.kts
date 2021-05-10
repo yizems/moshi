@@ -15,15 +15,15 @@
  */
 
 plugins {
-  kotlin("jvm")
-  id("com.vanniktech.maven.publish")
+    kotlin("jvm")
+//    id("com.vanniktech.maven.publish")
 }
 
 dependencies {
-  api(project(":moshi"))
-  api(kotlin("reflect"))
+    api(project(":moshi"))
+    api(kotlin("reflect"))
 
-  testImplementation(kotlin("test"))
-  testImplementation(Dependencies.Testing.junit)
-  testImplementation(Dependencies.Testing.truth)
+    testImplementation(kotlin("test"))
+    testImplementation(Dependencies.Testing.junit)
+    testImplementation(Dependencies.Testing.truth)
 }

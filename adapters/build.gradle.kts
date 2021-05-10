@@ -16,7 +16,7 @@
 
 plugins {
   kotlin("jvm")
-  id("com.vanniktech.maven.publish")
+//  id("com.vanniktech.maven.publish")
   id("ru.vyarus.animalsniffer")
 }
 
