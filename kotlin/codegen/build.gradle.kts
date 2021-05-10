@@ -22,8 +22,8 @@ plugins {
     kotlin("jvm")
     kotlin("kapt")
 //  id("com.vanniktech.maven.publish")
-    id("com.github.johnrengelman.shadow") version "6.0.0"
     id("maven-publish")
+    id("com.github.johnrengelman.shadow") version "6.0.0"
 }
 
 group = "cn.yize.moshi"
