@@ -46,6 +46,8 @@ NEXUS_PWD=xxx
 
 配置类似,看 `GithubPackagesConfig`
 
+**github packages 上传地址为:  https://maven.pkg.github.com/用户名/仓库名**
+
 一键执行命令:
 `gradlew clean moshi:publishMavenPublicationToGithubPackagesRepository kotlin:reflect:publishMavenPublicationToGithubPackagesRepository kotlin:codegen:publishMavenPublicationToGithubPackagesRepository android:publishMavenPublicationToGithubPackagesRepository`
 
