@@ -16,12 +16,8 @@
 
 plugins {
   kotlin("jvm")
-  id("maven-publish")
+  id("com.vanniktech.maven.publish")
 }
-
-group = "cn.yize.moshi"
-
-version = "1.12.0.7"
 
 dependencies {
   api(project(":moshi"))
@@ -31,4 +27,29 @@ dependencies {
   testImplementation(kotlin("test"))
   testImplementation(Dependencies.Testing.junit)
   testImplementation(Dependencies.Testing.truth)
+}
+
+publishing{
+  publications {
+    repositories{
+      maven {
+        name = "Nexus"
+        url = uri(NexusConfig.nexusUrl)
+        isAllowInsecureProtocol = true
+        credentials {
+          username = NexusConfig.nexusUserName
+          password = NexusConfig.nexusPWD
+        }
+      }
+      maven {
+        name = "GithubPackages"
+        url = uri(GithubPackagesConfig.Url)
+//        isAllowInsecureProtocol = true
+        credentials {
+          username = GithubPackagesConfig.UserName
+          password = GithubPackagesConfig.PWD
+        }
+      }
+    }
+  }
 }

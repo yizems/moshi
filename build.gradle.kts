@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-//import com.diffplug.gradle.spotless.JavaExtension
+import com.diffplug.gradle.spotless.JavaExtension
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.net.URI
 import java.net.URL
 
 buildscript {
@@ -31,89 +30,86 @@ buildscript {
 }
 
 plugins {
-//  id("com.vanniktech.maven.publish") version "0.14.2" apply false
+  id("com.vanniktech.maven.publish") version "0.14.2" apply false
   id("org.jetbrains.dokka") version "1.4.30" apply false
-//  id("com.diffplug.spotless") version "5.11.0"
+  id("com.diffplug.spotless") version "5.11.0"
   id("ru.vyarus.animalsniffer") version "1.5.3" apply false
-//  id("me.champeau.gradle.japicmp") version "0.2.9" apply false
+  id("me.champeau.gradle.japicmp") version "0.2.9" apply false
 }
 
-//spotless {
-//  format("misc") {
-//    target("*.md", ".gitignore")
-//    trimTrailingWhitespace()
-//    indentWithSpaces(2)
-//    endWithNewline()
-//  }
-//  // GJF not compatible with JDK 15 yet
-//  if (!JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_15)) {
-//    val externalJavaFiles = arrayOf(
-//      "**/ClassFactory.java",
-//      "**/Iso8601Utils.java",
-//      "**/JsonReader.java",
-//      "**/JsonReaderPathTest.java",
-//      "**/JsonReaderTest.java",
-//      "**/JsonScope.java",
-//      "**/JsonUtf8Reader.java",
-//      "**/JsonUtf8ReaderPathTest.java",
-//      "**/JsonUtf8ReaderTest.java",
-//      "**/JsonUtf8ReaderTest.java",
-//      "**/JsonUtf8Writer.java",
-//      "**/JsonUtf8WriterTest.java",
-//      "**/JsonWriter.java",
-//      "**/JsonWriterPathTest.java",
-//      "**/JsonWriterTest.java",
-//      "**/LinkedHashTreeMap.java",
-//      "**/LinkedHashTreeMapTest.java",
-//      "**/PolymorphicJsonAdapterFactory.java",
-//      "**/RecursiveTypesResolveTest.java",
-//      "**/Types.java",
-//      "**/TypesTest.java"
-//    )
-//    val configureCommonJavaFormat: JavaExtension.() -> Unit = {
-//      googleJavaFormat("1.7")
-//    }
-//    java {
-//      configureCommonJavaFormat()
-//      target("**/*.java")
-//      targetExclude(
-//        "**/spotless.java",
-//        "**/build/**",
-//        *externalJavaFiles
-//      )
-//      licenseHeaderFile("spotless/spotless.java")
-//    }
-//    format("externalJava", JavaExtension::class.java) {
-//      // These don't use our spotless config for header files since we don't want to overwrite the
-//      // existing copyright headers.
-//      configureCommonJavaFormat()
-//      target(*externalJavaFiles)
-//    }
-//  }
-//  kotlin {
-//    ktlint(Dependencies.ktlintVersion).userData(mapOf("indent_size" to "2"))
-//    target("**/*.kt")
-//    trimTrailingWhitespace()
-//    endWithNewline()
-//    licenseHeaderFile("spotless/spotless.kt")
-//      .updateYearWithLatest(false)
-//    targetExclude("**/Dependencies.kt", "**/spotless.kt", "**/build/**")
-//  }
-//  kotlinGradle {
-//    ktlint(Dependencies.ktlintVersion).userData(mapOf("indent_size" to "2"))
-//    target("**/*.gradle.kts")
-//    trimTrailingWhitespace()
-//    endWithNewline()
-//    licenseHeaderFile("spotless/spotless.kts", "(import|plugins|buildscript|dependencies|pluginManagement)")
-//  }
-//}
+spotless {
+  format("misc") {
+    target("*.md", ".gitignore")
+    trimTrailingWhitespace()
+    indentWithSpaces(2)
+    endWithNewline()
+  }
+  // GJF not compatible with JDK 15 yet
+  if (!JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_15)) {
+    val externalJavaFiles = arrayOf(
+      "**/ClassFactory.java",
+      "**/Iso8601Utils.java",
+      "**/JsonReader.java",
+      "**/JsonReaderPathTest.java",
+      "**/JsonReaderTest.java",
+      "**/JsonScope.java",
+      "**/JsonUtf8Reader.java",
+      "**/JsonUtf8ReaderPathTest.java",
+      "**/JsonUtf8ReaderTest.java",
+      "**/JsonUtf8ReaderTest.java",
+      "**/JsonUtf8Writer.java",
+      "**/JsonUtf8WriterTest.java",
+      "**/JsonWriter.java",
+      "**/JsonWriterPathTest.java",
+      "**/JsonWriterTest.java",
+      "**/LinkedHashTreeMap.java",
+      "**/LinkedHashTreeMapTest.java",
+      "**/PolymorphicJsonAdapterFactory.java",
+      "**/RecursiveTypesResolveTest.java",
+      "**/Types.java",
+      "**/TypesTest.java"
+    )
+    val configureCommonJavaFormat: JavaExtension.() -> Unit = {
+      googleJavaFormat("1.7")
+    }
+    java {
+      configureCommonJavaFormat()
+      target("**/*.java")
+      targetExclude(
+        "**/spotless.java",
+        "**/build/**",
+        *externalJavaFiles
+      )
+      licenseHeaderFile("spotless/spotless.java")
+    }
+    format("externalJava", JavaExtension::class.java) {
+      // These don't use our spotless config for header files since we don't want to overwrite the
+      // existing copyright headers.
+      configureCommonJavaFormat()
+      target(*externalJavaFiles)
+    }
+  }
+  kotlin {
+    ktlint(Dependencies.ktlintVersion).userData(mapOf("indent_size" to "2"))
+    target("**/*.kt")
+    trimTrailingWhitespace()
+    endWithNewline()
+    licenseHeaderFile("spotless/spotless.kt")
+      .updateYearWithLatest(false)
+    targetExclude("**/Dependencies.kt", "**/spotless.kt", "**/build/**")
+  }
+  kotlinGradle {
+    ktlint(Dependencies.ktlintVersion).userData(mapOf("indent_size" to "2"))
+    target("**/*.gradle.kts")
+    trimTrailingWhitespace()
+    endWithNewline()
+    licenseHeaderFile("spotless/spotless.kts", "(import|plugins|buildscript|dependencies|pluginManagement)")
+  }
+}
 
 subprojects {
   repositories {
     mavenCentral()
-    maven {
-      url = URI("https://jitpack.io")
-    }
     // Required for Dokka
     exclusiveContent {
       forRepository {
@@ -161,32 +157,31 @@ subprojects {
   }
 
   // Configure publishing
-//  pluginManager.withPlugin("com.vanniktech.maven.publish") {
-//    // Configure automatic-module-name, but only for published modules
-//    @Suppress("UnstableApiUsage")
-//    val automaticModuleName = providers.gradleProperty("AUTOMATIC_MODULE_NAME")
-//      .forUseAtConfigurationTime()
-//    if (automaticModuleName.isPresent) {
-//      val name = automaticModuleName.get()
-//      tasks.withType<Jar>().configureEach {
-//        manifest {
-//          attributes("Automatic-Module-Name" to name)
+  pluginManager.withPlugin("com.vanniktech.maven.publish") {
+    // Configure automatic-module-name, but only for published modules
+    @Suppress("UnstableApiUsage")
+    val automaticModuleName = providers.gradleProperty("AUTOMATIC_MODULE_NAME")
+      .forUseAtConfigurationTime()
+    if (automaticModuleName.isPresent) {
+      val name = automaticModuleName.get()
+      tasks.withType<Jar>().configureEach {
+        manifest {
+          attributes("Automatic-Module-Name" to name)
+        }
+      }
+    }
+
+//    if (name != "codegen" && pluginManager.hasPlugin("org.jetbrains.kotlin.jvm")) {
+//      apply(plugin = "org.jetbrains.dokka")
+//      tasks.named<DokkaTask>("dokkaHtml") {
+//        outputDirectory.set(rootDir.resolve("docs/1.x"))
+//        dokkaSourceSets.configureEach {
+//          skipDeprecated.set(true)
+//          externalDocumentationLink {
+//            url.set(URL("https://square.github.io/okio/2.x/okio/"))
+//          }
 //        }
 //      }
 //    }
-//
-//
-////    if (name != "codegen" && pluginManager.hasPlugin("org.jetbrains.kotlin.jvm")) {
-////      apply(plugin = "org.jetbrains.dokka")
-////      tasks.named<DokkaTask>("dokkaHtml") {
-////        outputDirectory.set(rootDir.resolve("docs/1.x"))
-////        dokkaSourceSets.configureEach {
-////          skipDeprecated.set(true)
-////          externalDocumentationLink {
-////            url.set(URL("https://square.github.io/okio/2.x/okio/"))
-////          }
-////        }
-////      }
-////    }
-//  }
+  }
 }

@@ -1,5 +1,11 @@
 ## 我的修改
 
+吐槽: gradle kts 真的好复杂, 感觉还没有 groovy 好写, 提示挺好
+
+版本号配置
+
+根目录 `gradle.properties` 中的 `VERSION_NAME`
+
 ## TODO
 
 - 增加对Android JsonObject,JsonArray 的支持:待测试
@@ -10,6 +16,39 @@
 - 添加 对 `HashMap,MutableMap,LinkedHashMap,ArrayList,MutableList,HashSet,MutableSet,LinkedHashSet` 的支持
 - 反序列化失败,转为null,不闪退
 - 反序列化大小写不敏感
+
+
+## 使用方式
+
+### 1 发布到nexus
+
+根目录创建`nexus.properties` 文件
+
+```properties
+NEXUS_URL=xxx/repository/android-repositories
+NEXUS_USER_NAME=xxx
+NEXUS_PWD=xxx
+```
+
+然后修改`NexusConfig.PROJECT_ABS_PATH` 为你本地的项目绝对路径,ex:`E:/Project2/moshi`
+
+然后依次执行:
+`moshi:publishMavenPublicationToNexusRepository`
+`kotlin:reflect:publishMavenPublicationToNexusRepository`
+`kotlin:codegen:publishMavenPublicationToNexusRepository`
+`android:publishMavenPublicationToNexusRepository`
+
+一键执行命令:
+`gradlew clean moshi:publishMavenPublicationToNexusRepository kotlin:reflect:publishMavenPublicationToNexusRepository kotlin:codegen:publishMavenPublicationToNexusRepository android:publishMavenPublicationToNexusRepository`
+
+
+### 1 发布到GithubPackages
+
+配置类似,看 `GithubPackagesConfig`
+
+一键执行命令:
+`gradlew clean moshi:publishMavenPublicationToGithubPackagesRepository kotlin:reflect:publishMavenPublicationToGithubPackagesRepository kotlin:codegen:publishMavenPublicationToGithubPackagesRepository android:publishMavenPublicationToGithubPackagesRepository`
+
 
 
 Moshi: 原README

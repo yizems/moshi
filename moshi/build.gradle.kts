@@ -18,15 +18,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm")
-//  id("com.vanniktech.maven.publish")
+  id("com.vanniktech.maven.publish")
   id("ru.vyarus.animalsniffer")
-  id("maven-publish")
 }
-
-group = "cn.yize.moshi"
-
-version = "1.12.0.7"
-
 
 tasks.withType<KotlinCompile>()
   .matching { it.name.contains("test", true) }
@@ -44,4 +38,29 @@ dependencies {
   testCompileOnly(Dependencies.jsr305)
   testImplementation(Dependencies.Testing.junit)
   testImplementation(Dependencies.Testing.truth)
+}
+
+publishing{
+  publications {
+    repositories{
+      maven {
+        name = "Nexus"
+        url = uri(NexusConfig.nexusUrl)
+        isAllowInsecureProtocol = true
+        credentials {
+          username = NexusConfig.nexusUserName
+          password = NexusConfig.nexusPWD
+        }
+      }
+      maven {
+        name = "GithubPackages"
+        url = uri(GithubPackagesConfig.Url)
+//        isAllowInsecureProtocol = true
+        credentials {
+          username = GithubPackagesConfig.UserName
+          password = GithubPackagesConfig.PWD
+        }
+      }
+    }
+  }
 }
