@@ -1,6 +1,6 @@
 ## 我的修改
 
-吐槽: gradle kts 真的好复杂, 感觉还没有 groovy 好写, 提示挺好
+吐槽: gradle kts 真的好复杂, 感觉还没有 groovy 好写, 提示倒是挺好
 
 版本号配置
 
@@ -16,6 +16,12 @@
 - 添加 对 `HashMap,MutableMap,LinkedHashMap,ArrayList,MutableList,HashSet,MutableSet,LinkedHashSet` 的支持
 - 反序列化失败,转为null,不闪退
 - 反序列化大小写不敏感
+- kotlin:test 被玩坏了,我也不知道为啥坏了=.= 但是项目功能正常
+
+## 其他
+
+- kotlin:test 被玩坏了,我也不知道为啥坏了=.= 但是项目功能正常
+- adapter 模块无修改,请使用官方的
 
 
 ## 使用方式
@@ -32,16 +38,17 @@ NEXUS_PWD
 也可以在`NexusConfig` 中写死
 
 然后依次执行:
-`moshi:publishMavenPublicationToNexusRepository`
-`kotlin:reflect:publishMavenPublicationToNexusRepository`
-`kotlin:codegen:publishMavenPublicationToNexusRepository`
-`android:publishMavenPublicationToNexusRepository`
+- `moshi:publishMavenPublicationToNexusRepository`
+- `kotlin:reflect:publishMavenPublicationToNexusRepository`
+- `kotlin:codegen:publishMavenPublicationToNexusRepository`
+- `android:publishMavenPublicationToNexusRepository`
 
 一键执行命令:
+
 `gradlew clean moshi:publishMavenPublicationToNexusRepository kotlin:reflect:publishMavenPublicationToNexusRepository kotlin:codegen:publishMavenPublicationToNexusRepository android:publishMavenPublicationToNexusRepository`
 
 
-### 1 发布到GithubPackages
+### 2 发布到GithubPackages
 
 配置环境变量
 ```properties
@@ -54,6 +61,7 @@ GITHUB_PACKAGES_TOKEN
 **github packages 上传地址为:  https://maven.pkg.github.com/用户名/仓库名**
 
 一键执行命令:
+
 `gradlew clean moshi:publishMavenPublicationToGithubPackagesRepository kotlin:reflect:publishMavenPublicationToGithubPackagesRepository kotlin:codegen:publishMavenPublicationToGithubPackagesRepository android:publishMavenPublicationToGithubPackagesRepository`
 
 
