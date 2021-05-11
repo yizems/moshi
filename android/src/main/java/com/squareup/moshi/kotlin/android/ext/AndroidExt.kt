@@ -8,7 +8,9 @@ import org.json.JSONObject
 import org.json.JSONTokener
 import java.io.Serializable
 
-
+/**
+ * 支持 [MJsonObject] 和 [MJsonArray] ,并且实现了 [Serializable] 接口
+ */
 public fun Moshi.Builder.addAndroidJsonSupport(): Moshi.Builder {
     return this.add(AndroidJsonAdapter())
 }

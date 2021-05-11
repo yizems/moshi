@@ -243,14 +243,6 @@ public final class Moshi {
       if (adapter == null) throw new IllegalArgumentException("adapter == null");
       return addLast(AdapterMethodsFactory.get(adapter));
     }
-    /** 添加自带的兼容处理类 */
-    public Builder addExtCompatAdapters(){
-      List<Object> extCompatAdapters = ExtCompatAdapterKt.getExtCompatAdapters();
-      for (Object extCompatAdapter : extCompatAdapters) {
-        add(extCompatAdapter);
-      }
-      return this;
-    }
 
     @CheckReturnValue
     public Moshi build() {

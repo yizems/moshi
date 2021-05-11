@@ -1,21 +1,44 @@
 package com.squareup.moshi.ext
 
 import com.squareup.moshi.FromJson
-import java.util.LinkedHashSet
+import com.squareup.moshi.Moshi
+
+/**
+ * Boolean 值兼容
+ *
+ * 具体查看 [BooleanCompatAdapter.fromString]
+ */
+public fun Moshi.Builder.addBooleanCompatAdapter(): Moshi.Builder {
+    this.add(BooleanCompatAdapter())
+    return this
+}
+
+/**
+ * 支持 MutableList, ArrayList,HashMap,MutableMap,HashSet,MutableSet
+ */
+public fun Moshi.Builder.addCollectionExtAdapter(): Moshi.Builder {
+    for (extCompatAdapter in extCollectionAdapters) {
+        add(extCompatAdapter)
+    }
+    return this
+}
+
 
 /**
  * 兼容API,
  * 主要用于数据类型不对的处理
  */
 
-internal val extCompatAdapters: List<Any> by lazy {
+private val extCollectionAdapters: List<Any> by lazy {
     listOf(
-        BooleanCompatAdapter(),
         ListCompatAdapter(),
         SetCompatAdapter(),
         MapCompatAdapter(),
     )
 }
+
+
+
 
 public open class BooleanCompatAdapter {
     @FromJson
