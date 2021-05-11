@@ -19,13 +19,13 @@ internal val extCompatAdapters: List<Any> by lazy {
 
 internal class BooleanCompatAdapter {
     @FromJson
-    public fun fromJson(from: String?): Boolean {
+    public fun fromString(from: String?): Boolean {
         return from?.equals("1", true) == true
                 || from?.equals("true", true) == true
     }
 
     @FromJson
-    public fun fromJson(from: Int): Boolean {
+    public fun fromInt(from: Int): Boolean {
         return from == 1
     }
 }
@@ -77,18 +77,6 @@ internal class SetCompatAdapter {
         return ret
     }
 
-    @FromJson
-    fun <T> linkedHashSetFromJson(from: Set<T>?): LinkedHashSet<T>? {
-        from ?: return null
-        if (from is LinkedHashSet) {
-            return from
-        }
-        val ret = LinkedHashSet<T>()
-
-        ret.addAll(from)
-
-        return ret
-    }
 }
 
 internal class MapCompatAdapter {
