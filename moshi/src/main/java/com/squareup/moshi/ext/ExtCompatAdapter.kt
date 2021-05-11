@@ -17,16 +17,18 @@ internal val extCompatAdapters: List<Any> by lazy {
     )
 }
 
-internal class BooleanCompatAdapter {
+public open class BooleanCompatAdapter {
     @FromJson
-    public fun fromString(from: String?): Boolean {
-        return from?.equals("1", true) == true
-                || from?.equals("true", true) == true
-    }
+    public open fun fromString(from: Any?): Boolean {
 
-    @FromJson
-    public fun fromInt(from: Int): Boolean {
-        return from == 1
+        from ?: return false
+
+        return when (from) {
+            is Boolean -> return from
+            is String -> return from == "1" || from.equals("true", true)
+            is Number -> from.toInt() == 1
+            else -> false
+        }
     }
 }
 
@@ -81,33 +83,34 @@ internal class SetCompatAdapter {
 
 internal class MapCompatAdapter {
     @FromJson
-    fun <K,V> hashMapFromJson(from: Map<K,V>?): HashMap<K,V>? {
+    fun <K, V> hashMapFromJson(from: Map<K, V>?): HashMap<K, V>? {
         from ?: return null
         if (from is HashMap) {
             return from
         }
-        val ret = HashMap<K,V>()
+        val ret = HashMap<K, V>()
         ret.putAll(from)
         return ret
     }
 
     @FromJson
-    fun <K,V> linkedHashMapFromJson(from: Map<K,V>?): LinkedHashMap<K,V>? {
+    fun <K, V> linkedHashMapFromJson(from: Map<K, V>?): LinkedHashMap<K, V>? {
         from ?: return null
         if (from is LinkedHashMap) {
             return from
         }
-        val ret = LinkedHashMap<K,V>()
+        val ret = LinkedHashMap<K, V>()
         ret.putAll(from)
         return ret
     }
+
     @FromJson
-    fun <K,V> mutableMapFromJson(from: Map<K,V>?): MutableMap<K,V>? {
+    fun <K, V> mutableMapFromJson(from: Map<K, V>?): MutableMap<K, V>? {
         from ?: return null
         if (from is MutableMap) {
             return from
         }
-        val ret = mutableMapOf<K,V>()
+        val ret = mutableMapOf<K, V>()
         ret.putAll(from)
         return ret
     }
