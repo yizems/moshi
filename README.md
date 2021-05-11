@@ -22,15 +22,14 @@
 
 ### 1 发布到nexus
 
-根目录创建`nexus.properties` 文件
+环境变量:
 
 ```properties
-NEXUS_URL=xxx/repository/android-repositories
-NEXUS_USER_NAME=xxx
-NEXUS_PWD=xxx
+NEXUS_URL
+NEXUS_USER_NAME
+NEXUS_PWD
 ```
-
-然后修改`NexusConfig.PROJECT_ABS_PATH` 为你本地的项目绝对路径,ex:`E:/Project2/moshi`
+也可以在`NexusConfig` 中写死
 
 然后依次执行:
 `moshi:publishMavenPublicationToNexusRepository`
@@ -44,7 +43,13 @@ NEXUS_PWD=xxx
 
 ### 1 发布到GithubPackages
 
-配置类似,看 `GithubPackagesConfig`
+配置环境变量
+```properties
+GITHUB_PACKAGES_URL
+GITHUB_PACKAGES_USER_NAME
+GITHUB_PACKAGES_TOKEN
+```
+也可以写死 `GithubPackagesConfig`
 
 **github packages 上传地址为:  https://maven.pkg.github.com/用户名/仓库名**
 

@@ -1,24 +1,12 @@
-import java.io.File
-import java.util.*
 
 object GithubPackagesConfig {
-
-    private const val PROJECT_ABS_PATH = "E:/Project2/moshi"
-
-    private val config by lazy {
-        Properties()
-            .apply {
-                load(File("$PROJECT_ABS_PATH/github.properties").inputStream())
-            }
+    val Url: String by lazy {
+        System.getProperty("GITHUB_PACKAGES_URL")
     }
-
-    val Url by lazy {
-        config["URL"].toString()
-    }
-    val UserName by lazy {
-        config["USER_NAME"].toString()
+    val UserName: String by lazy {
+        System.getProperty("GITHUB_PACKAGES_USER_NAME")
     }
     val PWD by lazy {
-        config["TOKEN"].toString()
+        System.getProperty("GITHUB_PACKAGES_TOKEN")
     }
 }
