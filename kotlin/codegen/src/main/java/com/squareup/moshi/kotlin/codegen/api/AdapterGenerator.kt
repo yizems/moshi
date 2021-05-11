@@ -341,7 +341,7 @@ internal class AdapterGenerator(
       if (property.target.parameterIndex in targetConstructorParams) {
         continue // Already handled
       }
-      if (property.isDeserialize) {
+      if (!property.isDeserialize) {
         continue // We don't care about these outside of constructor parameters
       }
       components += PropertyOnly(property)
