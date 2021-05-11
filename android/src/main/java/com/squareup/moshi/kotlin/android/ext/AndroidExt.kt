@@ -13,12 +13,11 @@ public fun Moshi.Builder.addAndroidJsonSupport(): Moshi.Builder {
     return this.add(AndroidJsonAdapter())
 }
 
-
-public class AndroidJsonAdapter() {
+public class AndroidJsonAdapter {
 
     @FromJson
-    public fun objFromJson(str: String?): MJsonObject? {
-        return MJsonObject(str ?: return null)
+    public fun objFromJson(map: Map<Any?, Any?>?): MJsonObject? {
+        return MJsonObject(map?.toMutableMap() ?: return null)
     }
 
     @ToJson
@@ -27,8 +26,8 @@ public class AndroidJsonAdapter() {
     }
 
     @FromJson
-    public fun arrayFromJson(str: String?): MJsonArray? {
-        return MJsonArray(str ?: return null)
+    public fun arrayFromJson(str: List<Any?>?): MJsonArray? {
+        return MJsonArray(str?.toMutableList() ?: return null)
     }
 
     @ToJson
