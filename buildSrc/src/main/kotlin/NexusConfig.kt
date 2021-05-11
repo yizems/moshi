@@ -1,11 +1,24 @@
+import java.io.File
+import java.util.*
+
 object NexusConfig {
+
+    private const val PROJECT_ABS_PATH = "E:/Project2/moshi"
+
+    private val config by lazy {
+        Properties()
+            .apply {
+                load(File("$PROJECT_ABS_PATH/nexus.properties").inputStream())
+            }
+    }
+
     val nexusUrl by lazy {
-        System.getProperty("NEXUS_URL")
+        config["NEXUS_URL"].toString()
     }
     val nexusUserName by lazy {
-        System.getProperty("NEXUS_USER_NAME")
+        config["NEXUS_USER_NAME"].toString()
     }
     val nexusPWD by lazy {
-        System.getProperty("NEXUS_PWD")
+        config["NEXUS_PWD"].toString()
     }
 }
