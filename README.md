@@ -1,10 +1,8 @@
-## 我的修改
+## 修改
 
 吐槽: gradle kts 真的好复杂, 感觉还没有 groovy 好写, 提示倒是挺好
 
-版本号配置
-
-根目录 `gradle.properties` 中的 `VERSION_NAME`
+版本号配置: 根目录 `gradle.properties` 中的 `VERSION_NAME`
 
 
 ## 已完成
@@ -48,17 +46,25 @@ NEXUS_PWD=xxx
 `gradlew clean moshi:publishMavenPublicationToNexusRepository kotlin:reflect:publishMavenPublicationToNexusRepository kotlin:codegen:publishMavenPublicationToNexusRepository android:publishMavenPublicationToNexusRepository`
 
 
-### 2 发布到GithubPackages
+### 2 使用
 
-配置类似,看 `GithubPackagesConfig`
+```gradle
 
-**github packages 上传地址为:  https://maven.pkg.github.com/用户名/仓库名**
+// 使用插件
+apply plugin: 'kotlin-kapt'
 
-一键执行命令:
+//依赖
+def moshi_version = "1.12.0.21"
 
-`gradlew clean moshi:publishMavenPublicationToGithubPackagesRepository kotlin:reflect:publishMavenPublicationToGithubPackagesRepository kotlin:codegen:publishMavenPublicationToGithubPackagesRepository android:publishMavenPublicationToGithubPackagesRepository`
+implementation "com.squareup.moshi:moshi:${moshi_version}"
+implementation "com.squareup.moshi:moshi-android-ext:${moshi_version}"
+implementation "com.squareup.moshi:moshi-kotlin:${moshi_version}"
+kapt "com.squareup.moshi:moshi-kotlin-codegen:${moshi_version}"
 
+// 还需要使用 kotlin 的反射库
+implementation "com.jetbrains.kotlin:kotlin-reflect:${kotlin_version}"
 
+```
 
 Moshi: 原README
 =====

@@ -12,8 +12,6 @@ lib
 target
 pom.xml.*
 release.properties
-nexus.properties
-github.properties
 dependency-reduced-pom.xml
 
 .idea

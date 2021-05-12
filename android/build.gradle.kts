@@ -41,15 +41,6 @@ publishing{
           password = NexusConfig.nexusPWD
         }
       }
-      maven {
-        name = "GithubPackages"
-        url = uri(GithubPackagesConfig.Url)
-//        isAllowInsecureProtocol = true
-        credentials {
-          username = GithubPackagesConfig.UserName
-          password = GithubPackagesConfig.PWD
-        }
-      }
     }
   }
 }
