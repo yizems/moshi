@@ -58,7 +58,24 @@ NEXUS_PWD=xxx
 
 `gradlew clean moshi:publishMavenPublicationToGithubPackagesRepository kotlin:reflect:publishMavenPublicationToGithubPackagesRepository kotlin:codegen:publishMavenPublicationToGithubPackagesRepository android:publishMavenPublicationToGithubPackagesRepository`
 
+### 3 本仓库 packages 使用方式
 
+```
+//添加仓库
+repositories {
+   maven {
+        url 'http://maven.pkg.github.com/yizems/moshi'
+        credentials {
+            username 你的github用户名
+            password 你的github access token (https://github.com/settings/tokens)
+        }
+    }
+}
+```
+
+添加依赖:
+
+https://github.com/yizems?tab=packages&repo_name=moshi
 
 Moshi: 原README
 =====
