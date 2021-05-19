@@ -73,6 +73,7 @@ def moshi_version = "1.12.0.21"
 implementation "com.squareup.moshi:moshi:${moshi_version}"
 implementation "com.squareup.moshi:moshi-android-ext:${moshi_version}"
 implementation "com.squareup.moshi:moshi-kotlin:${moshi_version}"
+implementation "com.squareup.moshi:jobj:${moshi_version}"
 kapt "com.squareup.moshi:moshi-kotlin-codegen:${moshi_version}"
 
 // 还需要使用 kotlin 的反射库
