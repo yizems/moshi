@@ -11,8 +11,7 @@ object GithubPackagesConfig {
                 try {
                     load(File("$PROJECT_ABS_PATH/github.properties").inputStream())
                 } catch (e: Exception) {
-                    IllegalArgumentException("$PROJECT_ABS_PATH 目录下未找到 github.properties")
-                        .printStackTrace()
+                    println("$PROJECT_ABS_PATH 目录下未找到 github.properties ,无法上传 github packages")
                 }
             }
     }

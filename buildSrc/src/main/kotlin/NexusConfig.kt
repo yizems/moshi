@@ -12,8 +12,7 @@ object NexusConfig {
                 try {
                     load(File("$PROJECT_ABS_PATH/nexus.properties").inputStream())
                 } catch (e: Exception) {
-                    IllegalArgumentException("$PROJECT_ABS_PATH 目录下未找到 nexus.properties")
-                        .printStackTrace()
+                    println("$PROJECT_ABS_PATH 目录下未找到 nexus.properties ,无法上传 github packages")
                 }
             }
     }
