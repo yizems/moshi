@@ -18,13 +18,13 @@ object NexusConfig {
             }
     }
 
-    val nexusUrl by lazy {
-        config["NEXUS_URL"]?.toString()
+    val url by lazy {
+        config["URL"]?.toString()
     }
-    val nexusUserName by lazy {
-        config["NEXUS_USER_NAME"]?.toString()
+    val userName by lazy {
+        config["USER_NAME"]?.toString()
     }
-    val nexusPWD by lazy {
-        config["NEXUS_PWD"]?.toString()
+    val pwd by lazy {
+        config["PWD"]?.toString()
     }
 }

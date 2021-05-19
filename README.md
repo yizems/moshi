@@ -43,9 +43,9 @@
 根目录创建`nexus.properties` 文件
 
 ```properties
-NEXUS_URL=xxx/repository/android-repositories
-NEXUS_USER_NAME=xxx
-NEXUS_PWD=xxx
+URL=
+USER_NAME=
+PWD=
 ```
 
 然后修改`NexusConfig.PROJECT_ABS_PATH` 为你本地的项目绝对路径,ex:`E:/Project2/moshi`
@@ -66,10 +66,12 @@ NEXUS_PWD=xxx
 
 配置类似,看 `GithubPackagesConfig`
 
+`github.properties`
+
 ```properties
-NEXUS_URL=xxx/repository/android-repositories
-NEXUS_USER_NAME=xxx
-NEXUS_PWD=xxx
+URL=
+USER_NAME=
+PWD=
 ```
 
 **github packages 上传地址为:  https://maven.pkg.github.com/用户名/仓库名**

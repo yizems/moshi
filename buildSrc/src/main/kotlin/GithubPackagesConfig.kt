@@ -17,13 +17,13 @@ object GithubPackagesConfig {
             }
     }
 
-    val Url by lazy {
+    val url by lazy {
         config["URL"]?.toString()
     }
-    val UserName by lazy {
+    val userName by lazy {
         config["USER_NAME"]?.toString()
     }
-    val PWD by lazy {
-        config["TOKEN"]?.toString()
+    val pwd by lazy {
+        config["PWD"]?.toString()
     }
 }

@@ -32,26 +32,26 @@ dependencies {
 publishing {
   publications {
     repositories {
-      NexusConfig.nexusUrl?.let {
+      NexusConfig.url?.let {
         maven {
           name = "Nexus"
           url = uri(it)
           isAllowInsecureProtocol = true
           credentials {
-            username = NexusConfig.nexusUserName
-            password = NexusConfig.nexusPWD
+            username = NexusConfig.userName
+            password = NexusConfig.pwd
           }
         }
       }
 
-      GithubPackagesConfig.Url?.let {
+      GithubPackagesConfig.url?.let {
         maven {
           name = "GithubPackages"
           url = uri(it)
 //        isAllowInsecureProtocol = true
           credentials {
-            username = GithubPackagesConfig.UserName
-            password = GithubPackagesConfig.PWD
+            username = GithubPackagesConfig.userName
+            password = GithubPackagesConfig.pwd
           }
         }
       }
