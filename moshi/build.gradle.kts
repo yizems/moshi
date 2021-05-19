@@ -44,14 +44,14 @@ dependencies {
 publishing {
   publications {
     repositories {
-      NexusConfig.nexusUrl?.let {
+      NexusConfig.url?.let {
         maven {
           name = "Nexus"
           url = uri(it)
           isAllowInsecureProtocol = true
           credentials {
-            username = NexusConfig.nexusUserName
-            password = NexusConfig.nexusPWD
+            username = NexusConfig.userName
+            password = NexusConfig.pwd
           }
         }
       }

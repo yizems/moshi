@@ -41,9 +41,9 @@
 根目录创建`nexus.properties` 文件
 
 ```properties
-NEXUS_URL=xxx/repository/android-repositories
-NEXUS_USER_NAME=xxx
-NEXUS_PWD=xxx
+URL=
+USER_NAME=
+PWD=
 ```
 
 然后修改`NexusConfig.PROJECT_ABS_PATH` 为你本地的项目绝对路径,ex:`E:/Project2/moshi`
@@ -68,7 +68,7 @@ NEXUS_PWD=xxx
 apply plugin: 'kotlin-kapt'
 
 //依赖
-def moshi_version = "1.12.0.21"
+def moshi_version = "1.12.0.23"
 
 implementation "com.squareup.moshi:moshi:${moshi_version}"
 implementation "com.squareup.moshi:moshi-android-ext:${moshi_version}"

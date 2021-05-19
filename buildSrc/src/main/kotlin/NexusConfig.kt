@@ -12,19 +12,18 @@ object NexusConfig {
                 try {
                     load(File("$PROJECT_ABS_PATH/nexus.properties").inputStream())
                 } catch (e: Exception) {
-                    IllegalArgumentException("$PROJECT_ABS_PATH 目录下未找到 nexus.properties")
-                        .printStackTrace()
+                    println("$PROJECT_ABS_PATH 目录下未找到 nexus.properties ,无法上传 github packages")
                 }
             }
     }
 
-    val nexusUrl by lazy {
-        config["NEXUS_URL"]?.toString()
+    val url by lazy {
+        config["URL"]?.toString()
     }
-    val nexusUserName by lazy {
-        config["NEXUS_USER_NAME"]?.toString()
+    val userName by lazy {
+        config["USER_NAME"]?.toString()
     }
-    val nexusPWD by lazy {
-        config["NEXUS_PWD"]?.toString()
+    val pwd by lazy {
+        config["PWD"]?.toString()
     }
 }
