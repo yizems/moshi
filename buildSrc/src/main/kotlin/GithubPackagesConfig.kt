@@ -3,7 +3,7 @@ import java.util.*
 
 object GithubPackagesConfig {
 
-    private const val PROJECT_ABS_PATH = "E:/Project2/moshi"
+    private const val PROJECT_ABS_PATH = "C:/properties"
 
     private val config by lazy {
         Properties()
