@@ -14,32 +14,20 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
   kotlin("jvm")
   id("com.vanniktech.maven.publish")
-  id("ru.vyarus.animalsniffer")
 }
-
-tasks.withType<KotlinCompile>()
-  .matching { it.name.contains("test", true) }
-  .configureEach {
-    kotlinOptions {
-      @Suppress("SuspiciousCollectionReassignment") // It's not suspicious
-      freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalStdlibApi")
-    }
-  }
 
 dependencies {
-  compileOnly(Dependencies.jsr305)
-  api(Dependencies.okio)
+  api(project(":moshi"))
 
-  testCompileOnly(Dependencies.jsr305)
+  testImplementation(kotlin("test"))
   testImplementation(Dependencies.Testing.junit)
   testImplementation(Dependencies.Testing.truth)
-}
 
+  testImplementation("org.apache.commons:commons-lang3:3.12.0")
+}
 
 publishing {
   publications {
