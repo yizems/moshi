@@ -6,7 +6,7 @@
 
 根目录 `gradle.properties` 中的 `VERSION_NAME`
 
-最新版本: `1.12.0.22`
+最新版本: `1.12.0.23`
 
 
 ## 已完成
@@ -45,10 +45,11 @@ NEXUS_PWD=xxx
 - `kotlin:reflect:publishMavenPublicationToNexusRepository`
 - `kotlin:codegen:publishMavenPublicationToNexusRepository`
 - `android:publishMavenPublicationToNexusRepository`
+- `jsonobj:publishMavenPublicationToNexusRepository`
 
 一键执行命令:
 
-`gradlew clean moshi:publishMavenPublicationToNexusRepository kotlin:reflect:publishMavenPublicationToNexusRepository kotlin:codegen:publishMavenPublicationToNexusRepository android:publishMavenPublicationToNexusRepository`
+`gradlew clean moshi:publishMavenPublicationToNexusRepository kotlin:reflect:publishMavenPublicationToNexusRepository kotlin:codegen:publishMavenPublicationToNexusRepository android:publishMavenPublicationToNexusRepository jsonobj:publishMavenPublicationToNexusRepository`
 
 
 ### 2 发布到GithubPackages
@@ -65,7 +66,7 @@ NEXUS_PWD=xxx
 
 一键执行命令:
 
-`gradlew clean moshi:publishMavenPublicationToGithubPackagesRepository kotlin:reflect:publishMavenPublicationToGithubPackagesRepository kotlin:codegen:publishMavenPublicationToGithubPackagesRepository android:publishMavenPublicationToGithubPackagesRepository`
+`gradlew clean moshi:publishMavenPublicationToGithubPackagesRepository kotlin:reflect:publishMavenPublicationToGithubPackagesRepository kotlin:codegen:publishMavenPublicationToGithubPackagesRepository android:publishMavenPublicationToGithubPackagesRepository jsonobj:publishMavenPublicationToGithubPackagesRepository`
 
 
 
