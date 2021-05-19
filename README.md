@@ -6,6 +6,8 @@
 
 根目录 `gradle.properties` 中的 `VERSION_NAME`
 
+最新版本: `1.12.0.22`
+
 
 ## 已完成
 
@@ -13,8 +15,9 @@
 - 添加 对 `HashMap,MutableMap,LinkedHashMap,ArrayList,MutableList,HashSet,MutableSet,LinkedHashSet` 的支持
 - 反序列化失败,转为null,不闪退
 - 反序列化大小写不敏感
-- 增加对Android JsonObject,JsonArray 的支持:待测试
+- 增加对Android JsonObject,JsonArray 的支持
 - 增加`moshiInstances` 默认实现, 添加部分便捷方法, 看 `MoshiDefault.kt`
+- 增加`MJsonObject` 和 `MJsonArray` : 参考`fastjson`
 
 ## 其他
 
