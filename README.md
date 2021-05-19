@@ -7,6 +7,16 @@
 根目录 `gradle.properties` 中的 `VERSION_NAME`
 
 最新版本: `1.12.0.23`
+## 为何会有该库
+
+主要是旧项目迁移, 为了少改代码, 增加一些特性支持(fastjson)
+
+- 反序列化大小写不敏感
+- 反序列化 可变数据类型(list,map,set)支持
+- `JsonIgnore` 精确控制是否序列化和反序列化
+- 序列化失败自动为null/默认值(这块可能还需要调整下,考虑加个属性控制)
+- 数据类型 不一致 兼容, 例如 `bool` 支持读取 `int`(==1) `string`(=="1" or == "true") 数据
+- 吐槽: 后台 编码/数据 不规范,前端迁移泪两行
 
 
 ## 已完成
@@ -68,7 +78,24 @@ NEXUS_PWD=xxx
 
 `gradlew clean moshi:publishMavenPublicationToGithubPackagesRepository kotlin:reflect:publishMavenPublicationToGithubPackagesRepository kotlin:codegen:publishMavenPublicationToGithubPackagesRepository android:publishMavenPublicationToGithubPackagesRepository jsonobj:publishMavenPublicationToGithubPackagesRepository`
 
+### 3 本仓库 packages 使用方式
 
+```
+//添加仓库
+repositories {
+   maven {
+        url 'http://maven.pkg.github.com/yizems/moshi'
+        credentials {
+            username 你的github用户名
+            password 你的github access token (https://github.com/settings/tokens)
+        }
+    }
+}
+```
+
+添加依赖:
+
+https://github.com/yizems?tab=packages&repo_name=moshi
 
 Moshi: 原README
 =====
