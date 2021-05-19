@@ -1,5 +1,4 @@
 import java.io.File
-import java.lang.IllegalArgumentException
 import java.util.*
 
 object NexusConfig {
@@ -12,7 +11,7 @@ object NexusConfig {
                 try {
                     load(File("$PROJECT_ABS_PATH/nexus.properties").inputStream())
                 } catch (e: Exception) {
-                    println("$PROJECT_ABS_PATH 目录下未找到 nexus.properties ,无法上传 github packages")
+                    println("$PROJECT_ABS_PATH 目录下未找到 nexus.properties ,无法上传 nexus packages")
                 }
             }
     }
