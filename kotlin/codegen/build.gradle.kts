@@ -106,25 +106,31 @@ artifacts {
   archives(shadowJar)
 }
 
-publishing{
+
+publishing {
   publications {
-    repositories{
-      maven {
-        name = "Nexus"
-        url = uri(NexusConfig.nexusUrl)
-        isAllowInsecureProtocol = true
-        credentials {
-          username = NexusConfig.nexusUserName
-          password = NexusConfig.nexusPWD
+    repositories {
+      NexusConfig.nexusUrl?.let {
+        maven {
+          name = "Nexus"
+          url = uri(it)
+          isAllowInsecureProtocol = true
+          credentials {
+            username = NexusConfig.nexusUserName
+            password = NexusConfig.nexusPWD
+          }
         }
       }
-      maven {
-        name = "GithubPackages"
-        url = uri(GithubPackagesConfig.Url)
+
+      GithubPackagesConfig.Url?.let {
+        maven {
+          name = "GithubPackages"
+          url = uri(it)
 //        isAllowInsecureProtocol = true
-        credentials {
-          username = GithubPackagesConfig.UserName
-          password = GithubPackagesConfig.PWD
+          credentials {
+            username = GithubPackagesConfig.UserName
+            password = GithubPackagesConfig.PWD
+          }
         }
       }
     }

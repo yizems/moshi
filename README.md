@@ -52,6 +52,12 @@ NEXUS_PWD=xxx
 
 配置类似,看 `GithubPackagesConfig`
 
+```properties
+NEXUS_URL=xxx/repository/android-repositories
+NEXUS_USER_NAME=xxx
+NEXUS_PWD=xxx
+```
+
 **github packages 上传地址为:  https://maven.pkg.github.com/用户名/仓库名**
 
 一键执行命令:

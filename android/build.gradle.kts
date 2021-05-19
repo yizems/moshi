@@ -15,41 +15,46 @@
  */
 
 plugins {
-  kotlin("jvm")
-  id("com.vanniktech.maven.publish")
+    kotlin("jvm")
+    id("com.vanniktech.maven.publish")
 }
 
 dependencies {
-  api(project(":moshi"))
+    api(project(":moshi"))
 
-  compileOnly("com.vaadin.external.google:android-json:0.0.20131108.vaadin1")
+    compileOnly("com.vaadin.external.google:android-json:0.0.20131108.vaadin1")
 
-  testImplementation(kotlin("test"))
-  testImplementation(Dependencies.Testing.junit)
-  testImplementation(Dependencies.Testing.truth)
+    testImplementation(kotlin("test"))
+    testImplementation(Dependencies.Testing.junit)
+    testImplementation(Dependencies.Testing.truth)
 }
 
-publishing{
-  publications {
-    repositories{
-      maven {
-        name = "Nexus"
-        url = uri(NexusConfig.nexusUrl)
-        isAllowInsecureProtocol = true
-        credentials {
-          username = NexusConfig.nexusUserName
-          password = NexusConfig.nexusPWD
-        }
-      }
-      maven {
-        name = "GithubPackages"
-        url = uri(GithubPackagesConfig.Url)
+publishing {
+    publications {
+        repositories {
+            NexusConfig.nexusUrl?.let {
+                maven {
+                    name = "Nexus"
+                    url = uri(it)
+                    isAllowInsecureProtocol = true
+                    credentials {
+                        username = NexusConfig.nexusUserName
+                        password = NexusConfig.nexusPWD
+                    }
+                }
+            }
+
+            GithubPackagesConfig.Url?.let {
+                maven {
+                    name = "GithubPackages"
+                    url = uri(it)
 //        isAllowInsecureProtocol = true
-        credentials {
-          username = GithubPackagesConfig.UserName
-          password = GithubPackagesConfig.PWD
+                    credentials {
+                        username = GithubPackagesConfig.UserName
+                        password = GithubPackagesConfig.PWD
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }

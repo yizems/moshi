@@ -21,13 +21,13 @@ plugins {
 
 dependencies {
   api(project(":moshi"))
-  api(kotlin("reflect"))
 
   testImplementation(kotlin("test"))
   testImplementation(Dependencies.Testing.junit)
   testImplementation(Dependencies.Testing.truth)
-}
 
+  testImplementation("org.apache.commons:commons-lang3:3.12.0")
+}
 
 publishing {
   publications {
