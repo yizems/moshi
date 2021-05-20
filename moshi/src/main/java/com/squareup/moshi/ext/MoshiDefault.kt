@@ -95,6 +95,23 @@ public fun <T> String.toClass(clz: Class<T>): T? {
   return clz.toAdapter().fromJson(this)
 }
 
-public fun <T> String.type(type: Type): T? {
+public fun <T> String.toClassList(clz: Class<T>): List<T>? {
+  return List::class.java
+    .newParameterizedType(clz)
+    .fromJson<List<T>>(this)
+}
+
+public fun <T, R> String.toMap(key: Class<T>, value: Class<R>): Map<T, R?>? {
+  return Map::class.java
+    .newParameterizedType(key, value)
+    .fromJson<Map<T, R?>>(this)
+}
+
+public fun <T> String.toMap(value: Class<T>): Map<String, T?>? {
+  return toMap(String::class.java,value)
+}
+
+public fun <T> String.toType(type: Type): T? {
   return type.toAdapter<T>().fromJson(this)
 }
+
