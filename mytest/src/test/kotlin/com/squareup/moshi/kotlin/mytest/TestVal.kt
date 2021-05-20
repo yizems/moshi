@@ -66,7 +66,7 @@ class TestVal {
 
       )
 
-    assert(ret!!.app == "ttt" && ret.name == "22")
+    assert(ret!!.app == "tttt" && ret.name == "22")
   }
 }
 
