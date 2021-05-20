@@ -18,6 +18,7 @@ package com.squareup.moshi.kotlin.jobj
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.ToJson
+import com.squareup.moshi.ext.fromJson
 
 
 public fun Moshi.Builder.addMJsonAdapter(): Moshi.Builder {
@@ -47,5 +48,14 @@ public class MJsonAdapter() {
     public fun arrayToJson(array: MJsonArray?): List<Any?>? {
         return array?.getInnerList()
     }
+}
 
+public fun String.toMJsonObject(): MJsonObject? {
+    return MJsonObject::class.java
+        .fromJson(this)
+}
+
+public fun String.toMJsonArray(): MJsonArray? {
+    return MJsonArray::class.java
+        .fromJson(this)
 }
