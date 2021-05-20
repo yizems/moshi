@@ -125,7 +125,11 @@ internal class AdapterGenerator(
     originalTypeName
   )
 
-  // selectName() API setup
+  /**
+   * selectName() API setup
+   * generate: private val options: JsonReader.Options = JsonReader.Options.of("name", "list")
+   * only fromJson use
+   */
   private val optionsProperty = PropertySpec.builder(
     nameAllocator.newName("options"),
     JsonReader.Options::class.asTypeName(),
@@ -134,7 +138,7 @@ internal class AdapterGenerator(
     .initializer(
       "%T.of(%L)",
       JsonReader.Options::class.asTypeName(),
-      nonTransientProperties
+      deserilizeProperties
         .map { CodeBlock.of("%S", it.jsonName) }
         .joinToCode(", ")
     )
