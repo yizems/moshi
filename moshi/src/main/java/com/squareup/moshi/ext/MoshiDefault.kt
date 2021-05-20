@@ -32,7 +32,7 @@ public fun <T> Class<T>.fromJson(str: String): T? {
 }
 
 public fun <T> Type.fromJson(str: String): T? {
-    return _moshInstances.adapter<T>(this).fromJson(str)
+  return _moshInstances.adapter<T>(this).fromJson(str)
 }
 
 /**
@@ -47,14 +47,14 @@ public fun Type.newParameterizedType(vararg type: Type): Type {
 }
 
 public fun <T> Type.toAdapter(vararg type: Type): JsonAdapter<T> {
-    if (type.isNotEmpty()) {
-        return _moshInstances.adapter(Types.newParameterizedType(this,*type))
-    }
-    return _moshInstances.adapter(this)
+  if (type.isNotEmpty()) {
+    return _moshInstances.adapter(Types.newParameterizedType(this, *type))
+  }
+  return _moshInstances.adapter(this)
 }
 
 public fun <T> Class<T>.toAdapter(): JsonAdapter<T> {
-    return _moshInstances.adapter(this)
+  return _moshInstances.adapter(this)
 }
 
 /**
@@ -72,8 +72,21 @@ public inline fun <reified T, R> T.toOtherBean(clz: Class<R>): R? {
   return clz
     .toAdapter()
     .fromJson(
-        T::class.java
-            .toAdapter()
-            .toJson(this)
+      T::class.java
+        .toAdapter()
+        .toJson(this)
+    )
+}
+
+/**
+ * 转换为别的对象
+ */
+public inline fun <reified T, R> T.toOtherBean(type: Type): R? {
+  return type
+    .toAdapter<R>()
+    .fromJson(
+      T::class.java
+        .toAdapter()
+        .toJson(this)
     )
 }
