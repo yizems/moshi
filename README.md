@@ -61,7 +61,7 @@ PWD=
 
 一键执行命令:
 
-`gradlew clean moshi:publishMavenPublicationToNexusRepository kotlin:reflect:publishMavenPublicationToNexusRepository kotlin:codegen:publishMavenPublicationToNexusRepository android:publishMavenPublicationToNexusRepository jsonobj:publishMavenPublicationToNexusRepository`
+`gradlew moshi:publishMavenPublicationToNexusRepository kotlin:reflect:publishMavenPublicationToNexusRepository kotlin:codegen:publishMavenPublicationToNexusRepository android:publishMavenPublicationToNexusRepository jsonobj:publishMavenPublicationToNexusRepository`
 
 
 ### 2 发布到GithubPackages
@@ -80,7 +80,7 @@ PWD=
 
 一键执行命令:
 
-`gradlew clean moshi:publishMavenPublicationToGithubPackagesRepository kotlin:reflect:publishMavenPublicationToGithubPackagesRepository kotlin:codegen:publishMavenPublicationToGithubPackagesRepository android:publishMavenPublicationToGithubPackagesRepository jsonobj:publishMavenPublicationToGithubPackagesRepository`
+`gradlew moshi:publishMavenPublicationToGithubPackagesRepository kotlin:reflect:publishMavenPublicationToGithubPackagesRepository kotlin:codegen:publishMavenPublicationToGithubPackagesRepository android:publishMavenPublicationToGithubPackagesRepository jsonobj:publishMavenPublicationToGithubPackagesRepository`
 
 ### 3 本仓库 packages 使用方式
 
