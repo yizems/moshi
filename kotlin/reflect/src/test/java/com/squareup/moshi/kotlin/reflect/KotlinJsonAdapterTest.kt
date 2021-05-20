@@ -18,7 +18,6 @@ package com.squareup.moshi.kotlin.reflect
 import com.google.common.truth.Truth.assertThat
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.jobj.KotlinJsonAdapterFactory
 import org.junit.Test
 
 class KotlinJsonAdapterTest {
