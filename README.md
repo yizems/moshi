@@ -4,30 +4,25 @@
 
 版本号配置: 根目录 `gradle.properties` 中的 `VERSION_NAME`
 
-最新版本: `1.12.0.27`
+最新版本: `1.12.0.30`
 
 ## 为何会有该库
 
-主要是旧项目迁移, 为了少改代码, 增加一些特性支持(fastjson)
-
-- 反序列化大小写不敏感
-- 反序列化 可变数据类型(list,map,set)支持
-- `JsonIgnore` 精确控制是否序列化和反序列化
-- 序列化失败自动为null/默认值(这块可能还需要调整下,考虑加个属性控制)
-- 数据类型 不一致 兼容, 例如 `bool` 支持读取 `int`(==1) `string`(=="1" or == "true") 数据
-- 吐槽: 后台 编码/数据 不规范,前端迁移泪两行
-
+主要是旧项目迁移, 为了少改代码, 增加一些兼容性
 
 ## 已完成
 
 - 增加专用注解`JsonIgnore`,控制是否支持序列化和反序列化
-- 添加 对 `HashMap,MutableMap,LinkedHashMap,ArrayList,MutableList,HashSet,MutableSet,LinkedHashSet` 的支持
+- 添加对 `ArrayList,MutableList,HashSet,LinkedHashSet,MutableSet,,HashMap,LinkedHashMap,MutableMap` 的支持
+  - 调整map 反序列化 构造对象: LinkedHashTreeMap->LinkedHashMap
 - 反序列化失败,转为null,不闪退
 - 反序列化大小写不敏感
 - 增加对Android JsonObject,JsonArray 的支持
 - 增加`moshiInstances` 默认实现, 添加部分便捷方法, 看 `MoshiDefault.kt`
 - 增加`MJsonObject` 和 `MJsonArray` : 参考`fastjson`
 - 增加对 非构造函数中的`val`变量序列化支持,注意:`val`不支持反序列化
+- 数据类型 不一致 兼容, 例如 `bool` 支持读取 `int`(==1) `string`(=="1" or == "true") 数据
+
 
 ## 其他
 
