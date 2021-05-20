@@ -4,7 +4,8 @@
 
 版本号配置: 根目录 `gradle.properties` 中的 `VERSION_NAME`
 
-最新版本: `1.12.0.26`
+最新版本: `1.12.0.27`
+
 ## 为何会有该库
 
 主要是旧项目迁移, 为了少改代码, 增加一些特性支持(fastjson)
@@ -58,7 +59,7 @@ PWD=
 
 一键执行命令:
 
-`gradlew clean moshi:publishMavenPublicationToNexusRepository kotlin:reflect:publishMavenPublicationToNexusRepository kotlin:codegen:publishMavenPublicationToNexusRepository android:publishMavenPublicationToNexusRepository jsonobj:publishMavenPublicationToNexusRepository`
+`gradlew moshi:publishMavenPublicationToNexusRepository kotlin:reflect:publishMavenPublicationToNexusRepository kotlin:codegen:publishMavenPublicationToNexusRepository android:publishMavenPublicationToNexusRepository jsonobj:publishMavenPublicationToNexusRepository`
 
 
 ### 2 使用
