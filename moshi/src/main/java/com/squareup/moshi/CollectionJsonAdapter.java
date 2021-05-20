@@ -15,17 +15,11 @@
  */
 package com.squareup.moshi;
 
-import kotlin.jvm.internal.markers.KMutableList;
-
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import javax.annotation.Nullable;
+import java.util.*;
 
 /** Converts collection types to JSON arrays containing their converted contents. */
 abstract class CollectionJsonAdapter<C extends Collection<T>, T> extends JsonAdapter<C> {
@@ -39,10 +33,12 @@ abstract class CollectionJsonAdapter<C extends Collection<T>, T> extends JsonAda
           if (rawType == List.class
                   || rawType == Collection.class
                   || rawType == ArrayList.class
-                  || rawType == KMutableList.class
           ) {
             return newArrayListAdapter(type, moshi).nullSafe();
-          } else if (rawType == Set.class) {
+          } else if (rawType == Set.class
+                  || rawType == HashSet.class
+                  || rawType == LinkedHashSet.class
+          ) {
             return newLinkedHashSetAdapter(type, moshi).nullSafe();
           }
           return null;

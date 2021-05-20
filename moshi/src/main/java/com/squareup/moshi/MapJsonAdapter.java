@@ -15,12 +15,14 @@
  */
 package com.squareup.moshi;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 /**
  * Converts maps with string keys to JSON objects.
@@ -35,7 +37,12 @@ final class MapJsonAdapter<K, V> extends JsonAdapter<Map<K, V>> {
             Type type, Set<? extends Annotation> annotations, Moshi moshi) {
           if (!annotations.isEmpty()) return null;
           Class<?> rawType = Types.getRawType(type);
-          if (rawType != Map.class) return null;
+          if (rawType != Map.class
+                  && rawType != HashMap.class
+                  && rawType != LinkedHashMap.class
+          ) {
+            return null;
+          }
           Type[] keyAndValue = Types.mapKeyAndValueTypes(type, rawType);
           return new MapJsonAdapter<>(moshi, keyAndValue[0], keyAndValue[1]).nullSafe();
         }
@@ -65,7 +72,7 @@ final class MapJsonAdapter<K, V> extends JsonAdapter<Map<K, V>> {
 
   @Override
   public Map<K, V> fromJson(JsonReader reader) throws IOException {
-    LinkedHashTreeMap<K, V> result = new LinkedHashTreeMap<>();
+    LinkedHashMap<K, V> result = new LinkedHashMap<>();
     reader.beginObject();
     while (reader.hasNext()) {
       reader.promoteNameToValue();
