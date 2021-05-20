@@ -29,163 +29,167 @@ import java.math.BigInteger
 
 public class MJsonObject : Serializable {
 
-    private var innerMap: MutableMap<String, Any?>
+  private var innerMap: MutableMap<String, Any?>
 
-    public constructor(initialCapacity: Int = 16, ordered: Boolean = false) {
-        innerMap = if (ordered) {
-            LinkedHashMap(initialCapacity)
-        } else {
-            HashMap(initialCapacity)
-        }
+  public constructor(initialCapacity: Int = 16, ordered: Boolean = false) {
+    innerMap = if (ordered) {
+      LinkedHashMap(initialCapacity)
+    } else {
+      HashMap(initialCapacity)
     }
+  }
 
-    public constructor(map: Map<String, Any?>) {
-        this.innerMap = HashMap<String, Any?>(16)
+  public constructor(map: Map<String, Any?>) {
+    this.innerMap = HashMap<String, Any?>(16)
 
-        map.forEach { (t, u) ->
-            innerMap[t] = wrapValue(u)
-        }
-
-
-    }
-
-    public fun size(): Int {
-        return innerMap.size
-    }
-
-    public fun isEmpty(): Boolean {
-        return innerMap.isEmpty()
-    }
-
-    public fun containsKey(key: Any?): Boolean {
-        return innerMap.containsKey(key)
-    }
-
-    public fun containsValue(value: Any?): Boolean {
-        return innerMap.containsValue(value)
-    }
-
-    public operator fun get(key: Any?): Any? {
-        return innerMap[key]
+    map.forEach { (t, u) ->
+      innerMap[t] = wrapValue(u)
     }
 
 
-    public fun getBoolean(key: String): Boolean? {
-        val value = get(key) ?: return null
-        return castToBoolean(value)
-    }
+  }
 
-    public fun getBooleanValue(key: String): Boolean {
-        val value = getBoolean(key)
-        return value ?: false
-    }
+  public fun size(): Int {
+    return innerMap.size
+  }
 
-    public fun getInteger(key: String?): Int? {
-        val value = get(key)
-        return castToInt(value)
-    }
+  public fun isEmpty(): Boolean {
+    return innerMap.isEmpty()
+  }
 
-    public fun getIntValue(key: String?): Int {
-        val value = get(key)
-        return castToInt(value) ?: return 0
-    }
+  public fun containsKey(key: Any?): Boolean {
+    return innerMap.containsKey(key)
+  }
 
-    public fun getLong(key: String?): Long? {
-        val value = get(key)
-        return castToLong(value)
-    }
+  public fun containsValue(value: Any?): Boolean {
+    return innerMap.containsValue(value)
+  }
 
-    public fun getLongValue(key: String?): Long {
-        val value = get(key)
-        return castToLong(value) ?: return 0L
-    }
+  public operator fun get(key: Any?): Any? {
+    return innerMap[key]
+  }
 
-    public fun getFloat(key: String?): Float? {
-        val value = get(key)
-        return castToFloat(value)
-    }
+  public operator fun set(key: String, value: Any?): Any? {
+    return put(key, value)
+  }
 
-    public fun getFloatValue(key: String?): Float {
-        val value = get(key)
-        return castToFloat(value) ?: return 0f
-    }
 
-    public fun getDouble(key: String?): Double? {
-        val value = get(key)
-        return castToDouble(value)
-    }
+  public fun getBoolean(key: String): Boolean? {
+    val value = get(key) ?: return null
+    return castToBoolean(value)
+  }
 
-    public fun getDoubleValue(key: String?): Double {
-        val value = get(key)
-        return castToDouble(value) ?: return 0.0
-    }
+  public fun getBooleanValue(key: String): Boolean {
+    val value = getBoolean(key)
+    return value ?: false
+  }
 
-    public fun getBigDecimal(key: String?): BigDecimal? {
-        val value = get(key)
-        return castToBigDecimal(value)
-    }
+  public fun getInteger(key: String?): Int? {
+    val value = get(key)
+    return castToInt(value)
+  }
 
-    public fun getBigInteger(key: String?): BigInteger? {
-        val value = get(key)
-        return castToBigInteger(value)
-    }
+  public fun getIntValue(key: String?): Int {
+    val value = get(key)
+    return castToInt(value) ?: return 0
+  }
 
-    public fun getString(key: String?): String? {
-        val value = get(key) ?: return null
-        return value.toString()
-    }
+  public fun getLong(key: String?): Long? {
+    val value = get(key)
+    return castToLong(value)
+  }
 
-    public fun put(key: String, value: Any?): Any? {
-        return innerMap.put(key, wrapValue(value))
-    }
+  public fun getLongValue(key: String?): Long {
+    val value = get(key)
+    return castToLong(value) ?: return 0L
+  }
 
-    public fun putAll(m: Map<out String, Any?>) {
-        m.forEach { (s, u) ->
-            innerMap[s] = wrapValue(u)
-        }
-    }
+  public fun getFloat(key: String?): Float? {
+    val value = get(key)
+    return castToFloat(value)
+  }
 
-    public fun clear() {
-        innerMap.clear()
-    }
+  public fun getFloatValue(key: String?): Float {
+    val value = get(key)
+    return castToFloat(value) ?: return 0f
+  }
 
-    public fun remove(key: Any?): Any? {
-        return innerMap.remove(key)
-    }
+  public fun getDouble(key: String?): Double? {
+    val value = get(key)
+    return castToDouble(value)
+  }
 
-    public fun keySet(): Set<String> {
-        return innerMap.keys
-    }
+  public fun getDoubleValue(key: String?): Double {
+    val value = get(key)
+    return castToDouble(value) ?: return 0.0
+  }
 
-    public fun values(): Collection<Any?> {
-        return innerMap.values
-    }
+  public fun getBigDecimal(key: String?): BigDecimal? {
+    val value = get(key)
+    return castToBigDecimal(value)
+  }
 
-    public fun entrySet(): Set<Map.Entry<String, Any?>?> {
-        return innerMap.entries
-    }
+  public fun getBigInteger(key: String?): BigInteger? {
+    val value = get(key)
+    return castToBigInteger(value)
+  }
 
-    public fun clone(): Any {
-        return MJsonObject(LinkedHashMap(innerMap))
-    }
+  public fun getString(key: String?): String? {
+    val value = get(key) ?: return null
+    return value.toString()
+  }
 
-    public override fun equals(other: Any?): Boolean {
-        return innerMap == other
-    }
+  public fun put(key: String, value: Any?): Any? {
+    return innerMap.put(key, wrapValue(value))
+  }
 
-    override fun hashCode(): Int {
-        return innerMap.hashCode()
+  public fun putAll(m: Map<out String, Any?>) {
+    m.forEach { (s, u) ->
+      innerMap[s] = wrapValue(u)
     }
+  }
 
-    public fun getInnerMap(): Map<String, Any?> {
-        return innerMap
-    }
+  public fun clear() {
+    innerMap.clear()
+  }
 
-    public fun getMJsonObject(key: String): MJsonObject? {
-        return innerMap[key] as? MJsonObject
-    }
+  public fun remove(key: Any?): Any? {
+    return innerMap.remove(key)
+  }
 
-    public fun getMJsonArray(key: String): MJsonArray? {
-        return innerMap[key] as? MJsonArray
-    }
+  public fun keySet(): Set<String> {
+    return innerMap.keys
+  }
+
+  public fun values(): Collection<Any?> {
+    return innerMap.values
+  }
+
+  public fun entrySet(): Set<Map.Entry<String, Any?>?> {
+    return innerMap.entries
+  }
+
+  public fun clone(): Any {
+    return MJsonObject(LinkedHashMap(innerMap))
+  }
+
+  public override fun equals(other: Any?): Boolean {
+    return innerMap == other
+  }
+
+  override fun hashCode(): Int {
+    return innerMap.hashCode()
+  }
+
+  public fun getInnerMap(): Map<String, Any?> {
+    return innerMap
+  }
+
+  public fun getMJsonObject(key: String): MJsonObject? {
+    return innerMap[key] as? MJsonObject
+  }
+
+  public fun getMJsonArray(key: String): MJsonArray? {
+    return innerMap[key] as? MJsonArray
+  }
 }
