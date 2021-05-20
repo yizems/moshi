@@ -181,11 +181,11 @@ public class MJsonObject : Serializable {
         return innerMap
     }
 
-    public fun getMJsonObject(key: String): MJsonObject {
-        return innerMap[key] as MJsonObject
+    public fun getMJsonObject(key: String): MJsonObject? {
+        return innerMap[key] as? MJsonObject
     }
 
-    public fun getMJsonArray(key: String): MJsonArray {
-        return innerMap[key] as MJsonArray
+    public fun getMJsonArray(key: String): MJsonArray? {
+        return innerMap[key] as? MJsonArray
     }
 }

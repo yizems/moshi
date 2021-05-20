@@ -209,12 +209,12 @@ public class MJsonArray : Serializable {
         return innerList.hashCode()
     }
 
-    public fun getMJsonObject(index: Int): MJsonObject {
-        return innerList[index] as MJsonObject
+    public fun getMJsonObject(index: Int): MJsonObject? {
+        return innerList[index] as? MJsonObject
     }
 
-    public fun getMJsonArray(index: Int): MJsonArray {
-        return innerList[index] as MJsonArray
+    public fun getMJsonArray(index: Int): MJsonArray? {
+        return innerList[index] as? MJsonArray
     }
 
     public fun getInnerList(): List<Any?> = innerList

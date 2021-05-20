@@ -90,3 +90,11 @@ public inline fun <reified T, R> T.toOtherBean(type: Type): R? {
         .toJson(this)
     )
 }
+
+public fun <T> String.toClass(clz: Class<T>): T? {
+  return clz.toAdapter().fromJson(this)
+}
+
+public fun <T> String.type(type: Type): T? {
+  return type.toAdapter<T>().fromJson(this)
+}
