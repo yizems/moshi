@@ -4,7 +4,7 @@
 
 版本号配置: 根目录 `gradle.properties` 中的 `VERSION_NAME`
 
-最新版本: `1.12.0.25`
+最新版本: `1.12.0.26`
 ## 为何会有该库
 
 主要是旧项目迁移, 为了少改代码, 增加一些特性支持(fastjson)
@@ -26,6 +26,7 @@
 - 增加对Android JsonObject,JsonArray 的支持
 - 增加`moshiInstances` 默认实现, 添加部分便捷方法, 看 `MoshiDefault.kt`
 - 增加`MJsonObject` 和 `MJsonArray` : 参考`fastjson`
+- 增加对 非构造函数中的`val`变量序列化支持,注意:`val`不支持反序列化
 
 ## 其他
 

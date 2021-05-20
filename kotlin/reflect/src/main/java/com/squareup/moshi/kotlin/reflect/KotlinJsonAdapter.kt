@@ -15,17 +15,10 @@
  */
 package com.squareup.moshi.kotlin.reflect
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonIgnore
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.Moshi
+import com.squareup.moshi.*
 import com.squareup.moshi.internal.Util
 import com.squareup.moshi.internal.Util.generatedAdapter
 import com.squareup.moshi.internal.Util.resolve
-import com.squareup.moshi.rawType
 import java.lang.reflect.Type
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
@@ -72,7 +65,7 @@ internal class KotlinJsonAdapter<T>(
       }
       val binding = nonTransientBindings[index]
 
-      if (!binding.deserialize){
+      if (!binding.deserialize) {
         reader.skipValue()
         continue
       }
@@ -193,128 +186,126 @@ internal class KotlinJsonAdapter<T>(
 
 public class KotlinJsonAdapterFactory : JsonAdapter.Factory {
   override fun create(type: Type, annotations: MutableSet<out Annotation>, moshi: Moshi):
-    JsonAdapter<*>? {
-      if (annotations.isNotEmpty()) return null
+          JsonAdapter<*>? {
+    if (annotations.isNotEmpty()) return null
 
-      val rawType = type.rawType
-      if (rawType.isInterface) return null
-      if (rawType.isEnum) return null
-      if (!rawType.isAnnotationPresent(KOTLIN_METADATA)) return null
-      if (Util.isPlatformType(rawType)) return null
-      try {
-        val generatedAdapter = generatedAdapter(moshi, type, rawType)
-        if (generatedAdapter != null) {
-          return generatedAdapter
-        }
-      } catch (e: RuntimeException) {
-        if (e.cause !is ClassNotFoundException) {
-          throw e
-        }
-        // Fall back to a reflective adapter when the generated adapter is not found.
+    val rawType = type.rawType
+    if (rawType.isInterface) return null
+    if (rawType.isEnum) return null
+    if (!rawType.isAnnotationPresent(KOTLIN_METADATA)) return null
+    if (Util.isPlatformType(rawType)) return null
+    try {
+      val generatedAdapter = generatedAdapter(moshi, type, rawType)
+      if (generatedAdapter != null) {
+        return generatedAdapter
       }
-
-      require(!rawType.isLocalClass) {
-        "Cannot serialize local class or object expression ${rawType.name}"
+    } catch (e: RuntimeException) {
+      if (e.cause !is ClassNotFoundException) {
+        throw e
       }
-      val rawTypeKotlin = rawType.kotlin
-      require(!rawTypeKotlin.isAbstract) {
-        "Cannot serialize abstract class ${rawType.name}"
-      }
-      require(!rawTypeKotlin.isInner) {
-        "Cannot serialize inner class ${rawType.name}"
-      }
-      require(rawTypeKotlin.objectInstance == null) {
-        "Cannot serialize object declaration ${rawType.name}"
-      }
-      require(!rawTypeKotlin.isSealed) {
-        "Cannot reflectively serialize sealed class ${rawType.name}. Please register an adapter."
-      }
-
-      val constructor = rawTypeKotlin.primaryConstructor ?: return null
-      val parametersByName = constructor.parameters.associateBy { it.name }
-      constructor.isAccessible = true
-
-      val bindingsByName = LinkedHashMap<String, KotlinJsonAdapter.Binding<Any, Any?>>()
-
-      for (property in rawTypeKotlin.memberProperties) {
-        val parameter = parametersByName[property.name]
-
-        //获取序列化忽略注解
-        val jsonIgnoreAnnotation = property.findAnnotation<JsonIgnore>()
-
-        val serialize = when (jsonIgnoreAnnotation) {
-          null -> true
-          else -> jsonIgnoreAnnotation.serialize
-        }
-
-        val deserialize = when (jsonIgnoreAnnotation) {
-          null -> true
-          else -> jsonIgnoreAnnotation.deserialize
-        }
-
-        if (!serialize && !deserialize) {
-          require(parameter == null || parameter.isOptional) {
-            "No default value for transient constructor $parameter"
-          }
-          continue
-        }
-
-        require(parameter == null || parameter.type == property.returnType) {
-          "'${property.name}' has a constructor parameter of type ${parameter!!.type} but a property of type ${property.returnType}."
-        }
-
-        if (property !is KMutableProperty1 && parameter == null) continue
-
-        property.isAccessible = true
-        val allAnnotations = property.annotations.toMutableList()
-        var jsonAnnotation = property.findAnnotation<Json>()
-
-
-        if (parameter != null) {
-          allAnnotations += parameter.annotations
-          if (jsonAnnotation == null) {
-            jsonAnnotation = parameter.findAnnotation()
-          }
-        }
-
-        val name = jsonAnnotation?.name ?: property.name
-        val resolvedPropertyType = resolve(type, rawType, property.returnType.javaType)
-        val adapter = moshi.adapter<Any>(
-          resolvedPropertyType,
-          Util.jsonAnnotations(allAnnotations.toTypedArray()),
-          property.name
-        )
-
-        @Suppress("UNCHECKED_CAST")
-        bindingsByName[property.name] = KotlinJsonAdapter.Binding(
-          name,
-          jsonAnnotation?.name ?: name,
-          serialize,
-          deserialize,
-          adapter,
-          property as KProperty1<Any, Any?>,
-          parameter,
-          parameter?.index ?: -1
-        )
-      }
-
-      val bindings = ArrayList<KotlinJsonAdapter.Binding<Any, Any?>?>()
-
-      for (parameter in constructor.parameters) {
-        val binding = bindingsByName.remove(parameter.name)
-        require(binding != null || parameter.isOptional) {
-          "No property for required constructor $parameter"
-        }
-        bindings += binding
-      }
-
-      var index = bindings.size
-      for (bindingByName in bindingsByName) {
-        bindings += bindingByName.value.copy(propertyIndex = index++)
-      }
-
-      val nonTransientBindings = bindings.filterNotNull()
-      val options = JsonReader.Options.of(*nonTransientBindings.map { it.name }.toTypedArray())
-      return KotlinJsonAdapter(constructor, bindings, nonTransientBindings, options).nullSafe()
+      // Fall back to a reflective adapter when the generated adapter is not found.
     }
+
+    require(!rawType.isLocalClass) {
+      "Cannot serialize local class or object expression ${rawType.name}"
+    }
+    val rawTypeKotlin = rawType.kotlin
+    require(!rawTypeKotlin.isAbstract) {
+      "Cannot serialize abstract class ${rawType.name}"
+    }
+    require(!rawTypeKotlin.isInner) {
+      "Cannot serialize inner class ${rawType.name}"
+    }
+    require(rawTypeKotlin.objectInstance == null) {
+      "Cannot serialize object declaration ${rawType.name}"
+    }
+    require(!rawTypeKotlin.isSealed) {
+      "Cannot reflectively serialize sealed class ${rawType.name}. Please register an adapter."
+    }
+
+    val constructor = rawTypeKotlin.primaryConstructor ?: return null
+    val parametersByName = constructor.parameters.associateBy { it.name }
+    constructor.isAccessible = true
+
+    val bindingsByName = LinkedHashMap<String, KotlinJsonAdapter.Binding<Any, Any?>>()
+
+    for (property in rawTypeKotlin.memberProperties) {
+      val parameter = parametersByName[property.name]
+
+      //获取序列化忽略注解
+      val jsonIgnoreAnnotation = property.findAnnotation<JsonIgnore>()
+
+      val serialize = when (jsonIgnoreAnnotation) {
+        null -> true
+        else -> jsonIgnoreAnnotation.serialize
+      }
+
+      val deserialize = when (jsonIgnoreAnnotation) {
+        null -> true
+        else -> jsonIgnoreAnnotation.deserialize
+      } && (property is KMutableProperty1 || parameter != null) //val dont support deserialize when dont in constructor
+
+      if (!serialize && !deserialize) {
+        require(parameter == null || parameter.isOptional) {
+          "No default value for transient constructor $parameter"
+        }
+        continue
+      }
+
+      require(parameter == null || parameter.type == property.returnType) {
+        "'${property.name}' has a constructor parameter of type ${parameter!!.type} but a property of type ${property.returnType}."
+      }
+
+      property.isAccessible = true
+      val allAnnotations = property.annotations.toMutableList()
+      var jsonAnnotation = property.findAnnotation<Json>()
+
+
+      if (parameter != null) {
+        allAnnotations += parameter.annotations
+        if (jsonAnnotation == null) {
+          jsonAnnotation = parameter.findAnnotation()
+        }
+      }
+
+      val name = jsonAnnotation?.name ?: property.name
+      val resolvedPropertyType = resolve(type, rawType, property.returnType.javaType)
+      val adapter = moshi.adapter<Any>(
+        resolvedPropertyType,
+        Util.jsonAnnotations(allAnnotations.toTypedArray()),
+        property.name
+      )
+
+      @Suppress("UNCHECKED_CAST")
+      bindingsByName[property.name] = KotlinJsonAdapter.Binding(
+        name,
+        jsonAnnotation?.name ?: name,
+        serialize,
+        deserialize,
+        adapter,
+        property as KProperty1<Any, Any?>,
+        parameter,
+        parameter?.index ?: -1
+      )
+    }
+
+    val bindings = ArrayList<KotlinJsonAdapter.Binding<Any, Any?>?>()
+
+    for (parameter in constructor.parameters) {
+      val binding = bindingsByName.remove(parameter.name)
+      require(binding != null || parameter.isOptional) {
+        "No property for required constructor $parameter"
+      }
+      bindings += binding
+    }
+
+    var index = bindings.size
+    for (bindingByName in bindingsByName) {
+      bindings += bindingByName.value.copy(propertyIndex = index++)
+    }
+
+    val nonTransientBindings = bindings.filterNotNull()
+    val options = JsonReader.Options.of(*nonTransientBindings.map { it.name }.toTypedArray())
+    return KotlinJsonAdapter(constructor, bindings, nonTransientBindings, options).nullSafe()
+  }
 }

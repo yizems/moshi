@@ -203,7 +203,7 @@ internal fun targetType(
     messager.printMessage(
       ERROR,
       "@JsonClass can't be applied to $element: " +
-        "primary constructor is not internal or public",
+              "primary constructor is not internal or public",
       element
     )
     return null
@@ -216,7 +216,7 @@ internal fun targetType(
     .filterNot { supertype ->
       @Suppress("DEPRECATION") // Appropriate in this case
       supertype.element.asClassName() == OBJECT_CLASS || // Don't load properties for java.lang.Object.
-        supertype.element.kind != ElementKind.CLASS // Don't load properties for interface types.
+              supertype.element.kind != ElementKind.CLASS // Don't load properties for interface types.
     }
     .onEach { supertype ->
       if (supertype.element.getAnnotation(Metadata::class.java) == null) {
@@ -381,7 +381,7 @@ private fun declaredProperties(
       parameter = parameter,
       visibility = property.modifiers.visibility(),
       jsonName = parameter?.jsonName ?: property.annotations.jsonName()
-        ?: name.escapeDollarSigns(),
+      ?: name.escapeDollarSigns(),
       isSerialize = parameter?.isSerialize ?: property.annotations.isSerialize(),
       isDeserialize = parameter?.isDeserialize ?: property.annotations.isDeserialize()
     )
@@ -435,10 +435,6 @@ internal fun TargetProperty.generator(
     return null
   }
 
-  if (!isSettable) {
-    return null // This property is not settable. Ignore it.
-  }
-
   // Merge parameter and property annotations
   val qualifiers = parameter?.qualifiers.orEmpty() + propertySpec.annotations.qualifiers(messager, elements)
   for (jsonQualifier in qualifiers) {
@@ -474,7 +470,7 @@ internal fun TargetProperty.generator(
     this,
     DelegateKey(type, jsonQualifierSpecs),
     isSerialize = isSerialize != false,
-    isDeserialize = isDeserialize != false,
+    isDeserialize = isDeserialize != false && isSettable,
   )
 }
 
