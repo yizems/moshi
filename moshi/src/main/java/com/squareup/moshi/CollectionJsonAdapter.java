@@ -15,6 +15,8 @@
  */
 package com.squareup.moshi;
 
+import kotlin.jvm.internal.markers.KMutableList;
+
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -34,7 +36,11 @@ abstract class CollectionJsonAdapter<C extends Collection<T>, T> extends JsonAda
             Type type, Set<? extends Annotation> annotations, Moshi moshi) {
           Class<?> rawType = Types.getRawType(type);
           if (!annotations.isEmpty()) return null;
-          if (rawType == List.class || rawType == Collection.class) {
+          if (rawType == List.class
+                  || rawType == Collection.class
+                  || rawType == ArrayList.class
+                  || rawType == KMutableList.class
+          ) {
             return newArrayListAdapter(type, moshi).nullSafe();
           } else if (rawType == Set.class) {
             return newLinkedHashSetAdapter(type, moshi).nullSafe();

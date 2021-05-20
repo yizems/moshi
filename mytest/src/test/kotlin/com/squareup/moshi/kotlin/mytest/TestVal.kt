@@ -24,44 +24,50 @@ import org.junit.Test
 
 @JsonClass(generateAdapter = true)
 data class TestValBean(
-    val name: String = "11"
+  val name: String = "11",
+  var list: MutableList<String>? = null
 ) {
-    val app get() = "tttt"
+  val app get() = "tttt"
 }
 
 class TestVal {
-    @Test
-    fun testValToJson() {
-        Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
-            .build()
-            .setToDefault()
+  @Test
+  fun testValToJson() {
+    Moshi.Builder()
+      .add(KotlinJsonAdapterFactory())
+      .build()
+      .setToDefault()
 
-        val ret = TestValBean::class.java.toAdapter()
-            .toJson(TestValBean())
+    val ret = TestValBean::class.java.toAdapter()
+      .toJson(TestValBean())
 
-        assert(ret.contains("app") && ret.contains("name"))
-    }
+    assert(ret.contains("app") && ret.contains("name"))
+  }
 
-    @Test
-    fun testValFromJson() {
-        Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
-            .build()
-            .setToDefault()
+  @Test
+  fun testValFromJson() {
+    Moshi.Builder()
+      .add(KotlinJsonAdapterFactory())
+//      .addCollectionExtAdapter()
+      .build()
+      .setToDefault()
 
-        val ret = TestValBean::class.java.toAdapter()
-            .fromJson(
-                """{
+    val ret = TestValBean::class.java.toAdapter()
+      .fromJson(
+        """{
   "name": "22",
-  "app": "666"
+  "app": "666",
+  "list": [
+    "1",
+    "2"
+  ]
 }
                 """.trimIndent()
 
-            )
+      )
 
-        assert(ret!!.app == "ttt" && ret.name=="22")
-    }
+    assert(ret!!.app == "ttt" && ret.name == "22")
+  }
 }
 
 
