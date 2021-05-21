@@ -211,6 +211,8 @@ public abstract class JsonReader implements Closeable {
     scopes = new int[32];
     pathNames = new String[32];
     pathIndices = new int[32];
+    this.lenient = Moshi.lenient;
+    this.failOnUnknown = Moshi.failOnUnknown;
   }
 
   // Package-private to control subclasses.

@@ -19,7 +19,6 @@ import static com.squareup.moshi.internal.Util.canonicalize;
 import static com.squareup.moshi.internal.Util.removeSubtypeWildcard;
 import static com.squareup.moshi.internal.Util.typeAnnotatedWithAnnotations;
 
-import com.squareup.moshi.ext.ExtCompatAdapterKt;
 import com.squareup.moshi.internal.Util;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -419,5 +418,28 @@ public final class Moshi {
     public String toString() {
       return adapter != null ? adapter.toString() : super.toString();
     }
+  }
+
+
+  /** 增加全局配置 */
+
+  static boolean lenient = true;
+  static boolean failOnUnknown = false;
+  static boolean serializeNulls = false;
+
+  /**
+   * 全局序列化配置
+   * @param lenient 是否宽容： 对非标准json name ，默认true
+   * @param failOnUnknown 未知 json name 是否失败，默认false
+   * @param serializeNulls null 是否序列化：默认false
+   */
+  public static void setGlobalConfig(
+          boolean lenient,
+          boolean failOnUnknown,
+          boolean serializeNulls
+  ){
+    Moshi.lenient = lenient;
+    Moshi.failOnUnknown = failOnUnknown;
+    Moshi.serializeNulls = serializeNulls;
   }
 }
