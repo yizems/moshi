@@ -182,6 +182,8 @@ public abstract class JsonWriter implements Closeable, Flushable {
 
   JsonWriter() {
     // Package-private to control subclasses.
+    this.lenient = Moshi.lenient;
+    this.serializeNulls = Moshi.serializeNulls;
   }
 
   /** Returns the scope on the top of the stack. */
