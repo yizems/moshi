@@ -55,18 +55,6 @@ publishing {
           }
         }
       }
-
-      GithubPackagesConfig.url?.let {
-        maven {
-          name = "GithubPackages"
-          url = uri(it)
-//        isAllowInsecureProtocol = true
-          credentials {
-            username = GithubPackagesConfig.userName
-            password = GithubPackagesConfig.pwd
-          }
-        }
-      }
     }
   }
 }

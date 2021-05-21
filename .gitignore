@@ -13,7 +13,6 @@ target
 pom.xml.*
 release.properties
 dependency-reduced-pom.xml
-nexus.properties
 github.properties
 
 .idea

@@ -57,42 +57,26 @@ PWD=
 `gradlew moshi:publishMavenPublicationToNexusRepository kotlin:reflect:publishMavenPublicationToNexusRepository kotlin:codegen:publishMavenPublicationToNexusRepository android:publishMavenPublicationToNexusRepository jsonobj:publishMavenPublicationToNexusRepository`
 
 
-### 2 发布到GithubPackages
+### 2 使用
 
-配置类似,看 `GithubPackagesConfig`
+```gradle
 
-`github.properties`
+// 使用插件
+apply plugin: 'kotlin-kapt'
 
-```properties
-URL=
-USER_NAME=
-PWD=
+//依赖
+def moshi_version = "1.12.0.23"
+
+implementation "com.squareup.moshi:moshi:${moshi_version}"
+implementation "com.squareup.moshi:moshi-android-ext:${moshi_version}"
+implementation "com.squareup.moshi:moshi-kotlin:${moshi_version}"
+implementation "com.squareup.moshi:jobj:${moshi_version}"
+kapt "com.squareup.moshi:moshi-kotlin-codegen:${moshi_version}"
+
+// 还需要使用 kotlin 的反射库
+implementation "com.jetbrains.kotlin:kotlin-reflect:${kotlin_version}"
+
 ```
-
-**github packages 上传地址为:  https://maven.pkg.github.com/用户名/仓库名**
-
-一键执行命令:
-
-`gradlew moshi:publishMavenPublicationToGithubPackagesRepository kotlin:reflect:publishMavenPublicationToGithubPackagesRepository kotlin:codegen:publishMavenPublicationToGithubPackagesRepository android:publishMavenPublicationToGithubPackagesRepository jsonobj:publishMavenPublicationToGithubPackagesRepository`
-
-### 3 本仓库 packages 使用方式
-
-```
-//添加仓库
-repositories {
-   maven {
-        url 'http://maven.pkg.github.com/yizems/moshi'
-        credentials {
-            username 你的github用户名
-            password 你的github access token (https://github.com/settings/tokens)
-        }
-    }
-}
-```
-
-添加依赖:
-
-https://github.com/yizems?tab=packages&repo_name=moshi
 
 Moshi: 原README
 =====
