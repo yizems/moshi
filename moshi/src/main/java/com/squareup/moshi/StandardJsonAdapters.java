@@ -18,6 +18,7 @@ package com.squareup.moshi;
 import static com.squareup.moshi.internal.Util.generatedAdapter;
 
 import com.squareup.moshi.internal.Util;
+
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -29,7 +30,8 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 final class StandardJsonAdapters {
-  private StandardJsonAdapters() {}
+  private StandardJsonAdapters() {
+  }
 
   public static final JsonAdapter.Factory FACTORY =
       new JsonAdapter.Factory() {
@@ -87,7 +89,21 @@ final class StandardJsonAdapters {
       new JsonAdapter<Boolean>() {
         @Override
         public Boolean fromJson(JsonReader reader) throws IOException {
-          return reader.nextBoolean();
+          try {
+            return reader.nextBoolean();
+          } catch (JsonDataException e) {
+            try {
+              int ret = reader.nextInt();
+              return ret == 1;
+            } catch (JsonDataException e1) {
+              try {
+                String readStr = reader.nextString();
+                return readStr.equals("true");
+              } catch (JsonDataException e2) {
+                throw new JsonDataException(e.getMessage() + ",and not int,string, can not auto cast");
+              }
+            }
+          }
         }
 
         @Override
