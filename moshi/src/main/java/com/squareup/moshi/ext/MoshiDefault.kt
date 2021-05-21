@@ -28,11 +28,11 @@ public fun Moshi.setToDefault() {
  * @param type 泛型
  */
 public fun <T> Class<T>.fromJson(str: String): T? {
-  return _moshInstances.adapter(this).fromJson(str)
+  return toAdapter().fromJson(str)
 }
 
 public fun <T> Type.fromJson(str: String): T? {
-  return _moshInstances.adapter<T>(this).fromJson(str)
+  return toAdapter<T>().fromJson(str)
 }
 
 /**
@@ -46,16 +46,17 @@ public fun Type.newParameterizedType(vararg type: Type): Type {
   return this
 }
 
+public fun <T> Class<T>.toAdapter(): JsonAdapter<T> {
+  return _moshInstances.adapter(convertType(this))
+}
+
 public fun <T> Type.toAdapter(vararg type: Type): JsonAdapter<T> {
   if (type.isNotEmpty()) {
     return _moshInstances.adapter(Types.newParameterizedType(this, *type))
   }
-  return _moshInstances.adapter(this)
+  return _moshInstances.adapter(convertType(this))
 }
 
-public fun <T> Class<T>.toAdapter(): JsonAdapter<T> {
-  return _moshInstances.adapter(this)
-}
 
 /**
  * 转换为字符串
@@ -108,10 +109,22 @@ public fun <T, R> String.toMap(key: Class<T>, value: Class<R>): Map<T, R?>? {
 }
 
 public fun <T> String.toMap(value: Class<T>): Map<String, T?>? {
-  return toMap(String::class.java,value)
+  return toMap(String::class.java, value)
 }
 
 public fun <T> String.toType(type: Type): T? {
   return type.toAdapter<T>().fromJson(this)
 }
 
+/**
+ * 获取 adapter时转换 父类型
+ * HashMap -> Map
+ * LinkedHashMap -> Map
+ */
+private fun convertType(type: Type): Type {
+  return when (type) {
+    HashMap::class.java,
+    LinkedHashMap::class.java -> Types.newParameterizedType(type, String::class.java, Any::class.java)
+    else -> type
+  }
+}

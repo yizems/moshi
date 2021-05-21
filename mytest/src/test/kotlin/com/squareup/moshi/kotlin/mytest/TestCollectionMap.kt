@@ -17,6 +17,7 @@ package com.squareup.moshi.kotlin.mytest
 
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.ext.fromJson
 import com.squareup.moshi.ext.setToDefault
 import com.squareup.moshi.ext.toAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -85,7 +86,7 @@ class TestCollectionMap {
                 """.trimIndent()
 
       )
-    val toStr=ret.toString()
+    val toStr = ret.toString()
     println(toStr)
     assert(
       toStr.contains("list1")
@@ -93,6 +94,15 @@ class TestCollectionMap {
         && toStr.contains("hs1")
     )
   }
+
+  @Test
+  fun testMap() {
+
+    val ret = HashMap::class.java
+      .fromJson<HashMap<String, Int>>("""{"name":1}""")
+    println(ret)
+  }
+
 }
 
 
