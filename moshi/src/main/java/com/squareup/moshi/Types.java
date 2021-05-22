@@ -22,6 +22,8 @@ import static com.squareup.moshi.internal.Util.resolve;
 import com.squareup.moshi.internal.Util.GenericArrayTypeImpl;
 import com.squareup.moshi.internal.Util.ParameterizedTypeImpl;
 import com.squareup.moshi.internal.Util.WildcardTypeImpl;
+import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -342,9 +344,27 @@ public final class Types {
     if (context == Properties.class) return new Type[] {String.class, String.class};
 
     Type mapType = getSupertype(context, contextRawType, Map.class);
+
     if (mapType instanceof ParameterizedType) {
       ParameterizedType mapParameterizedType = (ParameterizedType) mapType;
-      return mapParameterizedType.getActualTypeArguments();
+
+      Type[] actualTypeArguments = mapParameterizedType.getActualTypeArguments();
+
+      // fix HashMap getSupertype is Map<K,V>
+      for (int i = 0; i < actualTypeArguments.length; i++) {
+        if (i > 1) {
+          break;
+        }
+        Type tmp = actualTypeArguments[i];
+        if (tmp instanceof TypeVariableImpl) {
+          if (((TypeVariableImpl<?>) tmp).getName().equals("K") && i == 0) {
+            actualTypeArguments[i] = Object.class;
+          } else if (((TypeVariableImpl<?>) tmp).getName().equals("V") && i == 1) {
+            actualTypeArguments[i] = Object.class;
+          }
+        }
+      }
+      return actualTypeArguments;
     }
     return new Type[] {Object.class, Object.class};
   }

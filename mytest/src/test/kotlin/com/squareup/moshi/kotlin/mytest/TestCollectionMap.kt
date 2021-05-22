@@ -17,9 +17,7 @@ package com.squareup.moshi.kotlin.mytest
 
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.ext.fromJson
-import com.squareup.moshi.ext.setToDefault
-import com.squareup.moshi.ext.toAdapter
+import com.squareup.moshi.ext.*
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import org.intellij.lang.annotations.Language
 import org.junit.Test
@@ -102,6 +100,42 @@ class TestCollectionMap {
       .fromJson<HashMap<String, Int>>("""{"name":1}""")
     println(ret)
   }
+
+  @Test
+  fun testHashMap() {
+      Moshi.Builder()
+      .add(KotlinJsonAdapterFactory())
+      .build()
+      .setToDefault()
+
+    val a=HashMap::class.java
+      .fromJson("""
+        {
+          "1":"2"
+        }
+      """.trimIndent())
+    println(a)
+    println(
+      hashMapOf(
+        "1" to 2,
+        "2" to "3"
+      ).toJsonString()
+    )
+  }
+
+  @Test
+  fun testArrayList() {
+    val moshi = Moshi.Builder()
+      .add(KotlinJsonAdapterFactory())
+      .build()
+
+    val a=moshi.adapter(ArrayList::class.java)
+      .fromJson("""
+        []
+      """.trimIndent())
+    println(a)
+  }
+
 
 }
 
