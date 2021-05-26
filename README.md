@@ -12,6 +12,8 @@
 
 ## 已完成
 
+[修改后特性快速入门](./快速入门.md)
+
 - 增加专用注解`JsonIgnore`,控制是否支持序列化和反序列化
 - 添加对 `ArrayList,MutableList,HashSet,LinkedHashSet,MutableSet,,HashMap,LinkedHashMap,MutableMap` 的支持
   - 调整map 反序列化 构造对象: LinkedHashTreeMap->LinkedHashMap
