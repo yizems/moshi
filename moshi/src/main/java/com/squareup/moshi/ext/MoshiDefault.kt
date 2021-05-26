@@ -47,7 +47,7 @@ public fun Type.newParameterizedType(vararg type: Type): Type {
 }
 
 public fun <T> Class<T>.toAdapter(): JsonAdapter<T> {
-  return _moshInstances.adapter(convertType(this))
+  return _moshInstances.adapter(this)
 }
 
 public fun <T> Type.toAdapter(vararg type: Type): JsonAdapter<T> {
@@ -114,17 +114,4 @@ public fun <T> String.toMap(value: Class<T>): Map<String, T?>? {
 
 public fun <T> String.toType(type: Type): T? {
   return type.toAdapter<T>().fromJson(this)
-}
-
-/**
- * 获取 adapter时转换 父类型
- * HashMap -> Map
- * LinkedHashMap -> Map
- */
-private fun convertType(type: Type): Type {
-  return when (type) {
-    HashMap::class.java,
-    LinkedHashMap::class.java -> Types.newParameterizedType(type, String::class.java, Any::class.java)
-    else -> type
-  }
 }
