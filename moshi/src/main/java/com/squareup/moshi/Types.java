@@ -15,35 +15,15 @@
  */
 package com.squareup.moshi;
 
-import static com.squareup.moshi.internal.Util.EMPTY_TYPE_ARRAY;
-import static com.squareup.moshi.internal.Util.getGenericSupertype;
-import static com.squareup.moshi.internal.Util.resolve;
+import com.squareup.moshi.internal.Util.*;
 
-import com.squareup.moshi.internal.Util.GenericArrayTypeImpl;
-import com.squareup.moshi.internal.Util.ParameterizedTypeImpl;
-import com.squareup.moshi.internal.Util.WildcardTypeImpl;
-import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Proxy;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.util.*;
+
+import static com.squareup.moshi.internal.Util.*;
 
 /** Factory methods for types. */
 @CheckReturnValue
@@ -356,11 +336,11 @@ public final class Types {
           break;
         }
         Type tmp = actualTypeArguments[i];
-        if (tmp instanceof TypeVariableImpl) {
-          if (((TypeVariableImpl<?>) tmp).getName().equals("K") && i == 0) {
-            actualTypeArguments[i] = Object.class;
-          } else if (((TypeVariableImpl<?>) tmp).getName().equals("V") && i == 1) {
-            actualTypeArguments[i] = Object.class;
+        if (tmp instanceof TypeVariable) {
+          if (((TypeVariable<?>) tmp).getName().equals("K") && i == 0) {
+            actualTypeArguments[i] = getRawType(tmp);
+          } else if (((TypeVariable<?>) tmp).getName().equals("V") && i == 1) {
+            actualTypeArguments[i] = getRawType(tmp);
           }
         }
       }
