@@ -4,7 +4,7 @@
 
 版本号配置: 根目录 `gradle.properties` 中的 `VERSION_NAME`
 
-最新版本: `1.12.0.37`
+最新版本: `1.12.0.40`
 
 ## 为何会有该库
 
@@ -23,7 +23,8 @@
 - 增加`MJsonObject` 和 `MJsonArray` : 参考`fastjson`
 - 增加对 非构造函数中的`val`变量序列化支持,注意:`val`不支持反序列化
 - 数据类型 不一致 兼容, 例如 `bool` 支持读取 `int`(==1) `string`(=="1" or == "true") 数据
-
+- moshi 如果没有指定数据类型, 会将 int 读为 double, 现在默认为 long, 除非有小数位
+- moshi 序列化时, double/float 如果没有小数位,则按照long的形式进行序列化
 
 ## 其他
 
