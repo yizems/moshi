@@ -23,6 +23,7 @@ import static com.squareup.moshi.JsonScope.NONEMPTY_OBJECT;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -437,8 +438,13 @@ public abstract class JsonWriter implements Closeable, Flushable {
       value(((Boolean) value).booleanValue());
 
     } else if (value instanceof Double) {
-      value(((Double) value).doubleValue());
-
+      double d = ((Double) value).doubleValue();
+      BigDecimal bigDecimal = new BigDecimal(d);
+      if (bigDecimal.scale() <= 0) {
+        value(bigDecimal.longValue());
+      } else {
+        value(((Double) value).doubleValue());
+      }
     } else if (value instanceof Long) {
       value(((Long) value).longValue());
 

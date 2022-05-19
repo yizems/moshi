@@ -528,8 +528,8 @@ public abstract class JsonReader implements Closeable {
       case NUMBER:
         double d = nextDouble();
         BigDecimal bigDecimal = new BigDecimal(d);
-        if (bigDecimal.scale() == 0) {
-          return bigDecimal.longValueExact();
+        if (bigDecimal.scale() <= 0) {
+          return bigDecimal.longValue();
         } else {
           return d;
         }
