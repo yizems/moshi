@@ -18,7 +18,7 @@ import java.util.*
 
 object NexusConfig {
 
-    private const val PROJECT_ABS_PATH = "E:/Project2/moshi"
+    private const val PROJECT_ABS_PATH = "E:/Projects/moshi"
 
     private val config by lazy {
         Properties()

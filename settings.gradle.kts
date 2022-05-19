@@ -16,6 +16,10 @@
 
 pluginManagement {
   repositories {
+    maven {
+      isAllowInsecureProtocol=true
+      setUrl("http://maven.aliyun.com/nexus/content/groups/public/")
+    }
     mavenCentral()
     gradlePluginPortal()
   }

@@ -109,6 +109,10 @@ spotless {
 
 subprojects {
   repositories {
+    maven {
+      isAllowInsecureProtocol=true
+      setUrl("http://maven.aliyun.com/nexus/content/groups/public/")
+    }
     mavenCentral()
     // Required for Dokka
     exclusiveContent {

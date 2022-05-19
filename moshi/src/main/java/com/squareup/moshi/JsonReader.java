@@ -19,6 +19,7 @@ import static java.util.Collections.unmodifiableList;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -525,8 +526,13 @@ public abstract class JsonReader implements Closeable {
         return nextString();
 
       case NUMBER:
-        return nextDouble();
-
+        double d = nextDouble();
+        BigDecimal bigDecimal = new BigDecimal(d);
+        if (bigDecimal.scale() == 0) {
+          return bigDecimal.longValueExact();
+        } else {
+          return d;
+        }
       case BOOLEAN:
         return nextBoolean();
 
