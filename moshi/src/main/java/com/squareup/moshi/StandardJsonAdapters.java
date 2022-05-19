@@ -22,6 +22,7 @@ import com.squareup.moshi.internal.Util;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -167,6 +168,12 @@ final class StandardJsonAdapters {
 
         @Override
         public void toJson(JsonWriter writer, Double value) throws IOException {
+          BigDecimal bigDecimal = new BigDecimal(value);
+          if (bigDecimal.scale() <= 0) {
+              writer.value(bigDecimal.longValue());
+              return;
+          }
+
           writer.value(value.doubleValue());
         }
 
@@ -196,6 +203,11 @@ final class StandardJsonAdapters {
             throw new NullPointerException();
           }
           // Use the Number overload so we write out float precision instead of double precision.
+          BigDecimal bigDecimal = new BigDecimal(value);
+          if (bigDecimal.scale() <= 0) {
+              writer.value(bigDecimal.longValue());
+              return;
+          }
           writer.value(value);
         }
 
