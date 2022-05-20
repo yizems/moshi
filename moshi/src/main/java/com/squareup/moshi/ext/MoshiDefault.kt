@@ -3,6 +3,8 @@ package com.squareup.moshi.ext
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import com.squareup.moshi.adapter.EnumJsonTypeAdapter
+import com.squareup.moshi.adapter.JsonCodecAdapter
 import java.lang.reflect.Type
 
 /**
@@ -11,6 +13,8 @@ import java.lang.reflect.Type
 
 private var _moshInstances: Moshi = Moshi
   .Builder()
+  .add(JsonCodecAdapter.FACTORY)
+  .add(EnumJsonTypeAdapter.FACTORY)
   .build()
 
 public val moshiInstances: Moshi
