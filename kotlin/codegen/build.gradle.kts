@@ -121,6 +121,17 @@ publishing {
           }
         }
       }
+      AliDevConfig.url?.let {
+        maven {
+          name = "AliDev"
+          url = uri(it)
+          isAllowInsecureProtocol = true
+          credentials {
+            username = AliDevConfig.userName
+            password = AliDevConfig.pwd
+          }
+        }
+      }
     }
   }
 }
