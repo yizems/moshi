@@ -525,7 +525,8 @@ internal class JsonUtf8Reader : JsonReader {
    * returns -1 and no name is consumed.
    */
   private fun findName(name: String?, options: Options): Int {
-    val i = options.strings.indexOfFirst { it == name }
+    // yizems, 忽略值的大小写
+    val i = options.strings.indexOfFirst { it.equals(name,ignoreCase = true) }
     return if (i > -1) {
       peeked = PEEKED_NONE
       pathNames[stackSize - 1] = name

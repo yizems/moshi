@@ -24,7 +24,7 @@ import com.squareup.kotlinpoet.PropertySpec
 public class PropertyGenerator(
   public val target: TargetProperty,
   public val delegateKey: DelegateKey,
-  public val isTransient: Boolean = false
+  private val isSettable: Boolean = true
 ) {
   public val name: String = target.name
   public val jsonName: String = target.jsonName ?: target.name
@@ -47,7 +47,8 @@ public class PropertyGenerator(
    * This is used to indicate that presence should be checked first before possible assigning null
    * to an absent value
    */
-  public val hasLocalIsPresentName: Boolean = !isTransient && hasDefault && !hasConstructorParameter && delegateKey.nullable
+  public val hasLocalIsPresentName: Boolean =
+    (isSettable || hasConstructorParameter) && target.isDeserialize() && hasDefault && !hasConstructorParameter && delegateKey.nullable
   public val hasConstructorDefault: Boolean = hasDefault && hasConstructorParameter
 
   internal fun allocateNames(nameAllocator: NameAllocator) {
@@ -76,5 +77,19 @@ public class PropertyGenerator(
       .mutable(true)
       .initializer("false")
       .build()
+  }
+
+  //yizems
+
+  public fun serialize(): Boolean {
+    return this.target.isSerialize()
+  }
+
+  public fun deserialize(): Boolean {
+    return this.target.isDeserialize() && (isSettable || hasConstructorParameter)
+  }
+
+  public fun ignore(): Boolean {
+    return !serialize() && !deserialize()
   }
 }

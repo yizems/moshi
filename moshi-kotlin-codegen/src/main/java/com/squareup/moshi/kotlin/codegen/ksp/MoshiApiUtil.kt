@@ -27,7 +27,7 @@ import com.squareup.moshi.kotlin.codegen.api.PropertyGenerator
 import com.squareup.moshi.kotlin.codegen.api.TargetProperty
 import com.squareup.moshi.kotlin.codegen.api.rawType
 
-private val TargetProperty.isSettable get() = propertySpec.mutable || parameter != null
+internal val TargetProperty.isSettable get() = propertySpec.mutable || parameter != null
 private val TargetProperty.isVisible: Boolean
   get() {
     return visibility == KModifier.INTERNAL ||
@@ -44,15 +44,15 @@ internal fun TargetProperty.generator(
   resolver: Resolver,
   originalType: KSDeclaration,
 ): PropertyGenerator? {
-  if (jsonIgnore) {
+  if (isIgnore()) {
     if (!hasDefault) {
       logger.error(
-        "No default value for transient/ignored property $name",
+        "No default value for ignored property $name",
         originalType
       )
       return null
     }
-    return PropertyGenerator(this, DelegateKey(type, emptyList()), true)
+    return PropertyGenerator(this, DelegateKey(type, emptyList()), isSettable)
   }
 
   if (!isVisible) {
@@ -61,10 +61,6 @@ internal fun TargetProperty.generator(
       originalType
     )
     return null
-  }
-
-  if (!isSettable) {
-    return null // This property is not settable. Ignore it.
   }
 
   // Merge parameter and property annotations
@@ -91,7 +87,8 @@ internal fun TargetProperty.generator(
 
   return PropertyGenerator(
     this,
-    DelegateKey(type, jsonQualifierSpecs)
+    DelegateKey(type, jsonQualifierSpecs),
+    isSettable
   )
 }
 

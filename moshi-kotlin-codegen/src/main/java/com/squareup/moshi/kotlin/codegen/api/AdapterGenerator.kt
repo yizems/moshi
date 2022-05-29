@@ -100,7 +100,7 @@ public class AdapterGenerator(
     }
   }
 
-  private val nonTransientProperties = propertyList.filterNot { it.isTransient }
+  private val nonTransientProperties = propertyList.filterNot { it.ignore() }
   private val className = target.typeName.rawType()
   private val visibility = target.visibility
   private val typeVariables = target.typeVariables
@@ -154,6 +154,7 @@ public class AdapterGenerator(
       "%T.of(%L)",
       JsonReader.Options::class.asTypeName(),
       nonTransientProperties
+        .filter { it.deserialize() }
         .map { CodeBlock.of("%S", it.jsonName) }
         .joinToCode(", ")
     )
@@ -319,7 +320,10 @@ public class AdapterGenerator(
       .addParameter(readerParam)
       .returns(originalTypeName)
 
-    for (property in nonTransientProperties) {
+    //yizems
+    val deserializeProperties = nonTransientProperties.filter { it.deserialize() }
+
+    for (property in deserializeProperties) {
       result.addCode("%L", property.generateLocalProperty())
       if (property.hasLocalIsPresentName) {
         result.addCode("%L", property.generateLocalIsPresentProperty())
@@ -345,9 +349,6 @@ public class AdapterGenerator(
     for (property in propertyList) {
       if (property.target.parameterIndex in targetConstructorParams) {
         continue // Already handled
-      }
-      if (property.isTransient) {
-        continue // We don't care about these outside of constructor parameters
       }
       components += PropertyOnly(property)
     }
@@ -404,12 +405,12 @@ public class AdapterGenerator(
 
     for (input in components) {
       if (input is ParameterOnly ||
-        (input is ParameterProperty && input.property.isTransient)
+        (input is ParameterProperty && !input.property.deserialize())
       ) {
         updateMaskIndexes()
         constructorPropertyTypes += input.type.asTypeBlock()
         continue
-      } else if (input is PropertyOnly && input.property.isTransient) {
+      } else if (input is PropertyOnly && !input.property.deserialize()) {
         continue
       }
 
@@ -493,7 +494,7 @@ public class AdapterGenerator(
     var separator = "\n"
 
     val resultName = nameAllocator.newName("result")
-    val hasNonConstructorProperties = nonTransientProperties.any { !it.hasConstructorParameter }
+    val hasNonConstructorProperties = deserializeProperties.any { !it.hasConstructorParameter }
     val returnOrResultAssignment = if (hasNonConstructorProperties) {
       // Save the result var for reuse
       result.addStatement("val %N: %T", resultName, originalTypeName)
@@ -518,7 +519,7 @@ public class AdapterGenerator(
       result.addCode("«%L·%T(", returnOrResultAssignment, originalTypeName)
       var localSeparator = "\n"
       val paramsToSet = components.filterIsInstance<ParameterProperty>()
-        .filterNot { it.property.isTransient }
+        .filterNot { !it.property.deserialize() }
 
       // Set all non-transient property parameters
       for (input in paramsToSet) {
@@ -588,7 +589,7 @@ public class AdapterGenerator(
     for (input in components.filterIsInstance<ParameterComponent>()) {
       result.addCode(separator)
       if (useDefaultsConstructor) {
-        if (input is ParameterOnly || (input is ParameterProperty && input.property.isTransient)) {
+        if (input is ParameterOnly || (input is ParameterProperty && !input.property.deserialize())) {
           // We have to use the default primitive for the available type in order for
           // invokeDefaultConstructor to properly invoke it. Just using "null" isn't safe because
           // the transient type may be a primitive type.
@@ -607,7 +608,7 @@ public class AdapterGenerator(
       }
       if (input is PropertyComponent) {
         val property = input.property
-        if (!property.isTransient && property.isRequired) {
+        if (property.deserialize() && property.isRequired) {
           result.addMissingPropertyCheck(property, readerParam)
         }
       }
@@ -627,7 +628,7 @@ public class AdapterGenerator(
     }
 
     // Assign properties not present in the constructor.
-    for (property in nonTransientProperties) {
+    for (property in deserializeProperties) {
       if (property.hasConstructorParameter) {
         continue // Property already handled.
       }

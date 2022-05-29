@@ -637,7 +637,7 @@ class DualKotlinTest {
     assertThat(decoded.b).isEqualTo(6)
   }
 
-  class TransientConstructorParameter(@Transient var a: Int = -1, var b: Int = -1)
+  class TransientConstructorParameter(@Json(ignore = true) var a: Int = -1, var b: Int = -1)
 
   @Test fun multipleTransientConstructorParameters() {
     val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
@@ -652,7 +652,7 @@ class DualKotlinTest {
     assertThat(decoded.c).isEqualTo(-1)
   }
 
-  class MultipleTransientConstructorParameters(@Transient var a: Int = -1, var b: Int = -1, @Transient var c: Int = -1)
+  class MultipleTransientConstructorParameters(@Json(ignore = true) var a: Int = -1, var b: Int = -1, @Json(ignore = true) var c: Int = -1)
 
   @Test fun transientProperty() {
     val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
@@ -671,8 +671,8 @@ class DualKotlinTest {
   }
 
   class TransientProperty {
-    @Transient var a: Int = -1
-    @Transient private var b: Int = -1
+    @Json(ignore = true) var a: Int = -1
+    @Json(ignore = true) private var b: Int = -1
     var c: Int = -1
 
     fun getB() = b

@@ -602,7 +602,7 @@ class GeneratedAdaptersTest {
   }
 
   @JsonClass(generateAdapter = true)
-  class TransientConstructorParameter(@Transient var a: Int = -1, var b: Int = -1)
+  class TransientConstructorParameter(@Json(ignore = true) var a: Int = -1, var b: Int = -1)
 
   @Test fun multipleTransientConstructorParameters() {
     val moshi = Moshi.Builder().build()
@@ -618,7 +618,7 @@ class GeneratedAdaptersTest {
   }
 
   @JsonClass(generateAdapter = true)
-  class MultipleTransientConstructorParameters(@Transient var a: Int = -1, var b: Int = -1, @Transient var c: Int = -1)
+  class MultipleTransientConstructorParameters(@Json(ignore = true) var a: Int = -1, var b: Int = -1, @Json(ignore = true) var c: Int = -1)
 
   @Test fun transientProperty() {
     val moshi = Moshi.Builder().build()
@@ -638,8 +638,8 @@ class GeneratedAdaptersTest {
 
   @JsonClass(generateAdapter = true)
   class TransientProperty {
-    @Transient var a: Int = -1
-    @Transient private var b: Int = -1
+    @Json(ignore = true) var a: Int = -1
+    @Json(ignore = true) private var b: Int = -1
     var c: Int = -1
 
     fun getB() = b
@@ -669,8 +669,8 @@ class GeneratedAdaptersTest {
 
     private fun <T> delegate(initial: T) = Delegates.observable(initial) { _, _, _ -> }
 
-    @delegate:Transient var a: Int by delegate(-1)
-    @delegate:Transient private var b: Int by delegate(-1)
+    @delegate:Json(ignore = true) var a: Int by delegate(-1)
+    @delegate:Json(ignore = true) private var b: Int by delegate(-1)
     var c: Int by delegate(-1)
 
     @JvmName("getBPublic")
@@ -1081,7 +1081,7 @@ class GeneratedAdaptersTest {
 
   @JsonClass(generateAdapter = true)
   class PrivateTransient {
-    @Transient private var a: Int = -1
+    @Json(ignore = true) private var a: Int = -1
     var b: Int = -1
 
     fun readA(): Int {
@@ -1301,7 +1301,7 @@ class GeneratedAdaptersTest {
   @JsonClass(generateAdapter = true)
   class InternalPropertyWithoutBackingField {
 
-    @Transient
+    @Json(ignore = true)
     private var foo: Int = 5
 
     internal var bar
@@ -1378,13 +1378,13 @@ class GeneratedAdaptersTest {
   @JsonClass(generateAdapter = true)
   data class LambdaTypeNames(
     val id: String,
-    @Transient
+    @Json(ignore = true)
     val simple: ((String) -> Boolean)? = null,
     // Receivers count as the first param, just annotated with a special annotation to indicate it's a receiver
-    @Transient
+    @Json(ignore = true)
     val receiver: (String.(String) -> Boolean)? = null,
     // Tests that we use `FunctionN` since it has more than 23 params
-    @Transient
+    @Json(ignore = true)
     val arity: (String.(String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String) -> Boolean)? = null,
   )
 }

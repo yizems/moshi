@@ -26,7 +26,10 @@ public data class TargetProperty(
   val parameter: TargetParameter?,
   val visibility: KModifier,
   val jsonName: String?,
-  val jsonIgnore: Boolean
+  // yizems
+  private val jsonIgnore: Boolean = false,
+  private val serialize: Boolean = true,
+  private val deserialize: Boolean = true,
 ) {
   val name: String get() = propertySpec.name
   val type: TypeName get() = propertySpec.type
@@ -34,4 +37,11 @@ public data class TargetProperty(
   val hasDefault: Boolean get() = parameter?.hasDefault ?: true
 
   override fun toString(): String = name
+
+  // yizems
+  public fun isSerialize(): Boolean = !jsonIgnore && serialize
+
+  public fun isDeserialize(): Boolean = !jsonIgnore && deserialize
+
+  public fun isIgnore(): Boolean = jsonIgnore || (!serialize || !deserialize)
 }

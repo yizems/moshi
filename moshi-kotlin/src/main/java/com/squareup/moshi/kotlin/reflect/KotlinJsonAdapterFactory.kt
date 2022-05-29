@@ -15,21 +15,13 @@
  */
 package com.squareup.moshi.kotlin.reflect
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
+import com.squareup.moshi.*
 import com.squareup.moshi.internal.generatedAdapter
 import com.squareup.moshi.internal.isPlatformType
 import com.squareup.moshi.internal.jsonAnnotations
 import com.squareup.moshi.internal.missingProperty
 import com.squareup.moshi.internal.resolve
 import com.squareup.moshi.internal.unexpectedNull
-import com.squareup.moshi.rawType
-import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -78,6 +70,11 @@ internal class KotlinJsonAdapter<T>(
         continue
       }
       val binding = nonIgnoredBindings[index]
+
+      if (!binding.deserialize) {
+        reader.skipValue()
+        continue
+      }
 
       val propertyIndex = binding.propertyIndex
       if (values[propertyIndex] !== ABSENT_VALUE) {
@@ -137,6 +134,7 @@ internal class KotlinJsonAdapter<T>(
     writer.beginObject()
     for (binding in allBindings) {
       if (binding == null) continue // Skip constructor parameters that aren't properties.
+      if (!binding.serialize) continue
 
       writer.name(binding.jsonName)
       binding.adapter.toJson(writer, binding.get(value))
@@ -151,7 +149,9 @@ internal class KotlinJsonAdapter<T>(
     val adapter: JsonAdapter<P>,
     val property: KProperty1<K, P>,
     val parameter: KParameter?,
-    val propertyIndex: Int
+    val propertyIndex: Int,
+    val serialize: Boolean = true,
+    val deserialize: Boolean = true,
   ) {
     fun get(value: K) = property.get(value)
 
@@ -247,13 +247,8 @@ public class KotlinJsonAdapterFactory : JsonAdapter.Factory {
           jsonAnnotation = parameter.findAnnotation()
         }
       }
-
-      if (Modifier.isTransient(property.javaField?.modifiers ?: 0)) {
-        require(parameter == null || parameter.isOptional) {
-          "No default value for transient constructor $parameter"
-        }
-        continue
-      } else if (jsonAnnotation?.ignore == true) {
+      //yizems
+      if (jsonAnnotation.allIgnore()) {
         require(parameter == null || parameter.isOptional) {
           "No default value for ignored constructor $parameter"
         }
@@ -264,7 +259,10 @@ public class KotlinJsonAdapterFactory : JsonAdapter.Factory {
         "'${property.name}' has a constructor parameter of type ${parameter!!.type} but a property of type ${property.returnType}."
       }
 
-      if (property !is KMutableProperty1 && parameter == null) continue
+      val serialize = jsonAnnotation.realSerialize()
+      // 序列化需要满足 非 val,或 val 在构造函数中
+      val deserialize = jsonAnnotation.realDeserialize() && (property !is KMutableProperty1 && parameter == null)
+
 
       val jsonName = jsonAnnotation?.name?.takeUnless { it == Json.UNSET_NAME } ?: property.name
       val propertyType = when (val propertyTypeClassifier = property.returnType.classifier) {
@@ -304,7 +302,9 @@ public class KotlinJsonAdapterFactory : JsonAdapter.Factory {
         adapter,
         property as KProperty1<Any, Any?>,
         parameter,
-        parameter?.index ?: -1
+        parameter?.index ?: -1,
+        serialize,
+        deserialize,
       )
     }
 

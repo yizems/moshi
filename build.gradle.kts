@@ -26,9 +26,12 @@ plugins {
   alias(libs.plugins.japicmp) apply false
 }
 
+val VERSION_NAME :String by project
+
 allprojects {
   group = "com.squareup.moshi"
-  version = "1.14.0-SNAPSHOT"
+  version = VERSION_NAME
+  println(VERSION_NAME)
 
   repositories {
     mavenCentral()
@@ -99,6 +102,35 @@ subprojects {
 }
 
 allprojects {
+
+  repositories {
+    maven {
+      isAllowInsecureProtocol = true
+      setUrl("http://maven.aliyun.com/nexus/content/groups/public/")
+    }
+    MavenConfig.getRepositories()
+      .forEach {
+        maven {
+          url = uri(it.url)
+          credentials {
+            username = it.userName
+            password = it.pwd
+          }
+        }
+
+        if (!it.urlSnapshot.isNullOrBlank()) {
+          maven {
+            url = uri(it.urlSnapshot!!)
+            credentials {
+              username = it.userName
+              password = it.pwd
+            }
+          }
+        }
+      }
+  }
+
+
   tasks.withType<DokkaTask>().configureEach {
     dokkaSourceSets.configureEach {
       reportUndocumented.set(false)
@@ -121,32 +153,63 @@ allprojects {
   }
 
   plugins.withId("com.vanniktech.maven.publish.base") {
-    configure<MavenPublishBaseExtension> {
-      publishToMavenCentral(SonatypeHost.S01)
-      signAllPublications()
-      pom {
-        description.set("A modern JSON API for Android and Java")
-        name.set(project.name)
-        url.set("https://github.com/square/moshi/")
-        licenses {
-          license {
-            name.set("The Apache Software License, Version 2.0")
-            url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
-            distribution.set("repo")
-          }
-        }
-        scm {
-          url.set("https://github.com/square/moshi/")
-          connection.set("scm:git:git://github.com/square/moshi.git")
-          developerConnection.set("scm:git:ssh://git@github.com/square/moshi.git")
-        }
-        developers {
-          developer {
-            id.set("square")
-            name.set("Square, Inc.")
+//    configure<MavenPublishBaseExtension> {
+//      publishToMavenCentral(SonatypeHost.S01)
+//      signAllPublications()
+//      pom {
+//        description.set("A modern JSON API for Android and Java")
+//        name.set(project.name)
+//        url.set("https://github.com/square/moshi/")
+//        licenses {
+//          license {
+//            name.set("The Apache Software License, Version 2.0")
+//            url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+//            distribution.set("repo")
+//          }
+//        }
+//        scm {
+//          url.set("https://github.com/square/moshi/")
+//          connection.set("scm:git:git://github.com/square/moshi.git")
+//          developerConnection.set("scm:git:ssh://git@github.com/square/moshi.git")
+//        }
+//        developers {
+//          developer {
+//            id.set("square")
+//            name.set("Square, Inc.")
+//          }
+//        }
+//      }
+//    }
+
+    extensions.configure(PublishingExtension::class.java) {
+      publications {
+        repositories {
+          MavenConfig.getRepositories().forEach { mavenConfig ->
+            maven {
+              name = mavenConfig.name
+
+              val versionName = project.findProperty("VERSION_NAME")
+                ?.toString()
+
+              println(versionName)
+
+              val snapshot = versionName?.endsWith("SNAPSHOT") ?: false
+
+              if (snapshot && mavenConfig.urlSnapshot.isNullOrBlank()) {
+                throw java.lang.IllegalArgumentException("snapshot 地址没有配置")
+              }
+
+              url = uri(if (!snapshot) mavenConfig.url else mavenConfig.urlSnapshot!!)
+              isAllowInsecureProtocol = true
+              credentials {
+                username = mavenConfig.userName
+                password = mavenConfig.pwd
+              }
+            }
           }
         }
       }
     }
+
   }
 }

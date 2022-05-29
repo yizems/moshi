@@ -306,10 +306,11 @@ class JsonClassCodegenProcessorTest {
       kotlin(
         "source.kt",
         """
+          import com.squareup.moshi.Json
           import com.squareup.moshi.JsonClass
 
           @JsonClass(generateAdapter = true)
-          class RequiredTransientConstructorParameter(@Transient var a: Int)
+          class RequiredTransientConstructorParameter(@Json(ignore = true) var a: Int)
           """
       )
     )
@@ -620,7 +621,7 @@ class JsonClassCodegenProcessorTest {
               val arg36: Long = 36,
               val arg37: Long = 37,
               val arg38: Long = 38,
-              @Transient val arg39: Long = 39,
+              @Json(ignore = true) val arg39: Long = 39,
               val arg40: Long = 40,
               val arg41: Long = 41,
               val arg42: Long = 42,
@@ -634,7 +635,7 @@ class JsonClassCodegenProcessorTest {
               val arg50: Long = 50,
               val arg51: Long = 51,
               val arg52: Long = 52,
-              @Transient val arg53: Long = 53,
+              @Json(ignore = true) val arg53: Long = 53,
               val arg54: Long = 54,
               val arg55: Long = 55,
               val arg56: Long = 56,

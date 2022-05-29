@@ -45,8 +45,7 @@ import com.squareup.kotlinpoet.ksp.toKModifier
 import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.toTypeParameterResolver
 import com.squareup.kotlinpoet.ksp.toTypeVariableName
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonQualifier
+import com.squareup.moshi.*
 import com.squareup.moshi.kotlin.codegen.api.TargetConstructor
 import com.squareup.moshi.kotlin.codegen.api.TargetParameter
 import com.squareup.moshi.kotlin.codegen.api.TargetProperty
@@ -176,13 +175,17 @@ internal fun primaryConstructor(
   val parameters = LinkedHashMap<String, TargetParameter>()
   for ((index, parameter) in primaryConstructor.parameters.withIndex()) {
     val name = parameter.name!!.getShortName()
+    val jsonAnnotation = parameter.findAnnotationWithType<Json>()
     parameters[name] = TargetParameter(
       name = name,
       index = index,
       type = parameter.type.toTypeName(typeParameterResolver),
       hasDefault = parameter.hasDefault,
       qualifiers = parameter.qualifiers(resolver),
-      jsonName = parameter.jsonName()
+      jsonName = parameter.jsonName(),
+      jsonIgnore = jsonAnnotation?.ignore ?: false,
+      serialize = jsonAnnotation?.serialize ?: true,
+      deserialize = jsonAnnotation?.deserialize ?: true,
     )
   }
 
@@ -217,6 +220,14 @@ private fun KSAnnotated?.jsonIgnore(): Boolean {
   return this?.findAnnotationWithType<Json>()?.ignore ?: false
 }
 
+private fun KSAnnotated?.serialize(): Boolean {
+  return this?.findAnnotationWithType<Json>()?.serialize ?: true
+}
+
+private fun KSAnnotated?.deserialize(): Boolean {
+  return this?.findAnnotationWithType<Json>()?.deserialize ?: true
+}
+
 @OptIn(KspExperimental::class)
 private fun declaredProperties(
   constructor: TargetConstructor,
@@ -236,15 +247,14 @@ private fun declaredProperties(
     val propertySpec = property.toPropertySpec(resolver, resolvedType, typeParameterResolver)
     val name = propertySpec.name
     val parameter = constructor.parameters[name]
-    val isTransient = Modifier.JAVA_TRANSIENT in property.modifiers ||
-      property.isAnnotationPresent(Transient::class) ||
-      Modifier.JAVA_TRANSIENT in resolver.effectiveJavaModifiers(property)
     result[name] = TargetProperty(
       propertySpec = propertySpec,
       parameter = parameter,
       visibility = property.getVisibility().toKModifier() ?: KModifier.PUBLIC,
       jsonName = parameter?.jsonName ?: property.jsonName() ?: name,
-      jsonIgnore = isTransient || parameter?.jsonIgnore == true || property.jsonIgnore()
+      jsonIgnore = parameter?.jsonIgnore == true || property.jsonIgnore(),
+      serialize =  parameter?.serialize != false || property.serialize(),
+      deserialize =  parameter?.deserialize != false || property.deserialize(),
     )
   }
 

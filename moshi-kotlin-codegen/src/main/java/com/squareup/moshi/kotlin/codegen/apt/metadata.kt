@@ -45,6 +45,7 @@ import com.squareup.moshi.kotlin.codegen.api.TargetProperty
 import com.squareup.moshi.kotlin.codegen.api.TargetType
 import com.squareup.moshi.kotlin.codegen.api.rawType
 import com.squareup.moshi.kotlin.codegen.api.unwrapTypeAlias
+import com.squareup.moshi.kotlin.codegen.ksp.isSettable
 import kotlinx.metadata.KmConstructor
 import kotlinx.metadata.jvm.signature
 import java.lang.annotation.Retention
@@ -93,6 +94,8 @@ internal fun primaryConstructor(
       qualifiers = parameter.annotations.qualifiers(messager, elements),
       jsonName = parameter.annotations.jsonName(),
       jsonIgnore = parameter.annotations.jsonIgnore(),
+      serialize = parameter.annotations.serialize(),
+      deserialize = parameter.annotations.deserialize(),
     )
   }
 
@@ -383,22 +386,21 @@ private fun declaredProperties(
     val property = initialProperty.toBuilder(type = resolvedType).build()
     val name = property.name
     val parameter = constructor.parameters[name]
-    val isIgnored = property.annotations.any { it.typeName == TRANSIENT } ||
-      parameter?.jsonIgnore == true ||
-      property.annotations.jsonIgnore()
     result[name] = TargetProperty(
       propertySpec = property,
       parameter = parameter,
       visibility = property.modifiers.visibility(),
       jsonName = parameter?.jsonName ?: property.annotations.jsonName() ?: name,
-      jsonIgnore = isIgnored
+      jsonIgnore = parameter?.jsonIgnore == true || property.annotations.jsonIgnore(),
+      serialize = parameter?.serialize != false || property.annotations.serialize(),
+      deserialize = parameter?.deserialize != false || property.annotations.deserialize(),
     )
   }
 
   return result
 }
 
-private val TargetProperty.isSettable get() = propertySpec.mutable || parameter != null
+internal val TargetProperty.isSettable get() = propertySpec.mutable || parameter != null
 private val TargetProperty.isVisible: Boolean
   get() {
     return visibility == KModifier.INTERNAL ||
@@ -415,16 +417,16 @@ internal fun TargetProperty.generator(
   sourceElement: TypeElement,
   elements: Elements,
 ): PropertyGenerator? {
-  if (jsonIgnore) {
+  if (isIgnore()) {
     if (!hasDefault) {
       messager.printMessage(
         ERROR,
-        "No default value for transient/ignored property $name",
+        "No default value for ignored property $name",
         sourceElement
       )
       return null
     }
-    return PropertyGenerator(this, DelegateKey(type, emptyList()), true)
+    return PropertyGenerator(this, DelegateKey(type, emptyList()), isSettable)
   }
 
   if (!isVisible) {
@@ -436,9 +438,6 @@ internal fun TargetProperty.generator(
     return null
   }
 
-  if (!isSettable) {
-    return null // This property is not settable. Ignore it.
-  }
 
   // Merge parameter and property annotations
   val qualifiers = parameter?.qualifiers.orEmpty() + propertySpec.annotations.qualifiers(messager, elements)
@@ -466,7 +465,8 @@ internal fun TargetProperty.generator(
 
   return PropertyGenerator(
     this,
-    DelegateKey(type, jsonQualifierSpecs)
+    DelegateKey(type, jsonQualifierSpecs),
+    isSettable
   )
 }
 
@@ -498,12 +498,36 @@ private fun List<AnnotationSpec>?.jsonIgnore(): Boolean {
   } ?: false
 }
 
+//yizems
+private fun List<AnnotationSpec>?.serialize(): Boolean {
+  if (this == null) return false
+  return filter { it.typeName == JSON }.firstNotNullOfOrNull { annotation ->
+    annotation.serialize()
+  } ?: true
+}
+
+private fun List<AnnotationSpec>?.deserialize(): Boolean {
+  if (this == null) return false
+  return filter { it.typeName == JSON }.firstNotNullOfOrNull { annotation ->
+    annotation.deserialize()
+  } ?: true
+}
+
 private fun AnnotationSpec.jsonName(): String? {
   return elementValue<String>("name").takeUnless { it == Json.UNSET_NAME }
 }
 
 private fun AnnotationSpec.jsonIgnore(): Boolean {
   return elementValue<Boolean>("ignore") ?: false
+}
+
+//yizems
+private fun AnnotationSpec.serialize(): Boolean {
+  return elementValue<Boolean>("serialize") ?: true
+}
+
+private fun AnnotationSpec.deserialize(): Boolean {
+  return elementValue<Boolean>("deserialize") ?: true
 }
 
 private fun <T> AnnotationSpec.elementValue(name: String): T? {

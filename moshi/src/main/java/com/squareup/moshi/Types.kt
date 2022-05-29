@@ -16,22 +16,13 @@
 @file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 package com.squareup.moshi
 
-import com.squareup.moshi.internal.EMPTY_TYPE_ARRAY
-import com.squareup.moshi.internal.GenericArrayTypeImpl
-import com.squareup.moshi.internal.ParameterizedTypeImpl
-import com.squareup.moshi.internal.WildcardTypeImpl
-import com.squareup.moshi.internal.getGenericSupertype
-import com.squareup.moshi.internal.resolve
-import java.lang.reflect.GenericArrayType
-import java.lang.reflect.ParameterizedType
-import java.lang.reflect.Proxy
-import java.lang.reflect.Type
-import java.lang.reflect.TypeVariable
-import java.lang.reflect.WildcardType
-import java.util.Collections
-import java.util.Properties
-import javax.annotation.CheckReturnValue
+import com.squareup.moshi.internal.*
 import java.lang.annotation.Annotation as JavaAnnotation
+import java.lang.reflect.*
+import java.util.*
+import javax.annotation.CheckReturnValue
+import kotlin.Annotation
+import kotlin.String
 
 /** Factory methods for types. */
 @CheckReturnValue
@@ -315,7 +306,24 @@ public object Types {
     if (context === Properties::class.java) return arrayOf(String::class.java, String::class.java)
     val mapType = getSupertype(context, contextRawType, MutableMap::class.java)
     if (mapType is ParameterizedType) {
-      return mapType.actualTypeArguments
+
+      val actualTypeArguments: Array<Type> = mapType.actualTypeArguments
+
+      // fix HashMap getSupertype is Map<K,V>
+      for (i in actualTypeArguments.indices) {
+        if (i > 1) {
+          break
+        }
+        val tmp = actualTypeArguments[i]
+        if (tmp is TypeVariable<*>) {
+          if (tmp.name == "K" && i == 0) {
+            actualTypeArguments[i] = getRawType(tmp)
+          } else if (tmp.name == "V" && i == 1) {
+            actualTypeArguments[i] = getRawType(tmp)
+          }
+        }
+      }
+      return actualTypeArguments
     }
     return arrayOf(Any::class.java, Any::class.java)
   }

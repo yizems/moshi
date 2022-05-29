@@ -39,10 +39,20 @@ public annotation class Json(
    *
    * **Note:** this has no effect in `enum` or `record` classes.
    */
-  val ignore: Boolean = false
+  val ignore: Boolean = false,
+  //yizems
+  val serialize: Boolean = true,
+  val deserialize: Boolean = true,
 ) {
   public companion object {
     /** The default value of [name]. Should only be used to check if it's been set. */
     public const val UNSET_NAME: String = "\u0000"
   }
 }
+
+//yizems
+
+public fun Json?.realSerialize(): Boolean = this == null || (!ignore && serialize)
+public fun Json?.realDeserialize(): Boolean = this == null || (!ignore && deserialize)
+
+public fun Json?.allIgnore(): Boolean = this != null && (ignore || (!serialize && !deserialize))

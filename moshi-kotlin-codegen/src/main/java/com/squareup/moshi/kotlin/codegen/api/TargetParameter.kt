@@ -27,5 +27,8 @@ public data class TargetParameter(
   val hasDefault: Boolean,
   val jsonName: String? = null,
   val jsonIgnore: Boolean = false,
-  val qualifiers: Set<AnnotationSpec>? = null
+  val qualifiers: Set<AnnotationSpec>? = null,
+  //yizems
+  val serialize: Boolean = true,
+  val deserialize: Boolean = true,
 )

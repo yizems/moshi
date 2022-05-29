@@ -294,7 +294,7 @@ class KotlinJsonAdapterTest {
     }
   }
 
-  class RequiredTransientConstructorParameter(@Transient var a: Int)
+  class RequiredTransientConstructorParameter(@Json(ignore = true) var a: Int)
 
   @Test fun requiredIgnoredConstructorParameterFails() {
     val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
