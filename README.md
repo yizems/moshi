@@ -12,11 +12,58 @@
 
 主要是旧项目迁移, 为了少改代码, 增加一些兼容性
 
-## 已完成
 
-- 注解`Json` 增加 单独控制序列化和反序列化的字段
-- 反序列化大小写不敏感
-- 增加对 非构造函数中的`val`变量序列化支持,注意:`val`不支持反序列化
+## 特性
+
+### 1 `JsonIgnore`
+
+```kotlin
+data class Demo(
+  @Json(serialize = true,deserialize = true)
+  var name:String
+)
+```
+
+
+### 2 val 成员变量 默认支持序列化(不支持反序列化)
+
+如果我们的代码这样写:
+```kotlin
+data class Demo(
+  var name:String
+){
+  val age:Int
+  val age2:Int
+      get() {
+        return 10 
+      }
+
+}
+```
+
+`age`和`age2` 字段是不支持序列化到json字符串的; 现已支持,无需配置;
+
+如果不需要序列化,加上 `Json(ignore=true)` 注解即可;
+
+
+
+
+### 3 关于遇到获取不到adapter 报错的说明
+
+原库的设计理念是 标准DTO和常用数据格式, 但是我们总是会遇到各种使用到的, 不常见的数据类型;
+
+比如 `DataLocal`, 如果一旦遇到,我们需要使用 原库 提供的 自定义adapter的方式 来完成 序列化和反序列化;
+
+所以原库的扩展性特别强, 也要提醒大家, 不是所有对象都支持; 
+
+目前支持的数据类型有:
+
+- 基本数据类型和String
+- 自定义的实体类
+- 集合: Map,List, 本库添加的几个集合支持
+- 本库: 安卓自带的JsonObject 和 JsonArray
+- 本库: MJsonObject MJsonArray
+
 
 更多特性,请看[MoshiEx](https://github.com/yizems/MoshiEx)
 
