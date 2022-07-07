@@ -1,5 +1,9 @@
 pluginManagement {
   repositories {
+    maven {
+      isAllowInsecureProtocol=true
+      setUrl("http://maven.aliyun.com/nexus/content/groups/public/")
+    }
     mavenCentral()
     gradlePluginPortal()
   }
@@ -7,15 +11,15 @@ pluginManagement {
 
 rootProject.name = "moshi-root"
 include(":moshi")
-include(":moshi:japicmp")
-include(":moshi:records-tests")
+//include(":moshi:japicmp")
+//include(":moshi:records-tests")
 include(":moshi-adapters")
-include(":moshi-adapters:japicmp")
-include(":examples")
+//include(":moshi-adapters:japicmp")
+//include(":examples")
 include(":moshi-kotlin")
 include(":moshi-kotlin-codegen")
-include(":moshi-kotlin-tests")
-include(":moshi-kotlin-tests:codegen-only")
-include(":moshi-kotlin-tests:extra-moshi-test-module")
+//include(":moshi-kotlin-tests")
+//include(":moshi-kotlin-tests:codegen-only")
+//include(":moshi-kotlin-tests:extra-moshi-test-module")
 
 enableFeaturePreview("VERSION_CATALOGS")

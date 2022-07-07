@@ -6,7 +6,6 @@ import org.gradle.jvm.tasks.Jar
 plugins {
   kotlin("jvm")
   id("com.vanniktech.maven.publish.base")
-  id("org.jetbrains.dokka")
 }
 
 dependencies {
@@ -22,7 +21,6 @@ tasks.withType<Jar>().configureEach {
     attributes("Automatic-Module-Name" to "com.squareup.moshi.adapters")
   }
 }
-
 configure<MavenPublishBaseExtension> {
-  configure(KotlinJvm(javadocJar = Dokka("dokkaGfm")))
+  configure(KotlinJvm(javadocJar = com.vanniktech.maven.publish.JavadocJar.None()))
 }
