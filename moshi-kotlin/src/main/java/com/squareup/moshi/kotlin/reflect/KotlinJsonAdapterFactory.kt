@@ -261,7 +261,7 @@ public class KotlinJsonAdapterFactory : JsonAdapter.Factory {
 
       val serialize = jsonAnnotation.realSerialize()
       // 序列化需要满足 非 val,或 val 在构造函数中
-      val deserialize = jsonAnnotation.realDeserialize() && (property !is KMutableProperty1 && parameter == null)
+      val deserialize = jsonAnnotation.realDeserialize() && (property is KMutableProperty1 || parameter != null)
 
 
       val jsonName = jsonAnnotation?.name?.takeUnless { it == Json.UNSET_NAME } ?: property.name
