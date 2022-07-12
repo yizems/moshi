@@ -6,7 +6,7 @@
 
 版本号配置: 根目录 `gradle.properties` 中的 `VERSION_NAME`
 
-最新版本: `1.13.0.13`
+最新版本: `1.13.0.14`
 
 注意:
 1.12.0.x 的 JsonIgnore 现已调整为 Json()
